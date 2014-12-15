@@ -17,6 +17,7 @@ namespace spsServerAPI.Controllers
     [AllowAnonymous]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/PlacementProviders")]
+    
     public class PlacementProvidersController : ApiController
     {
         private Model db = new Model();

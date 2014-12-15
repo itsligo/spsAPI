@@ -34,10 +34,6 @@ namespace spsServerAPI
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             // for OWIN auth and serialisation
             app.UseWebApi(config);
-            AreaRegistration.RegisterAllAreas();
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // Configure the db context and user manager to use a single instance per request
             app.CreatePerOwinContext(ApplicationDbContext.Create);
