@@ -78,7 +78,21 @@ namespace spsServerAPI.Controllers
                                     id = p.StartDate.Value.Year,
                                     year = p.StartDate.Value.Year
                                 }).Distinct();
-
+                // if no placements then just return the current year
+                // as no year causes an error on the client
+                if(yearList.Count() == 0)
+                {
+                    var defaultList = new List<object>(); 
+                    var Default = 
+                                (new
+                                {
+                                    id = DateTime.Now.Year,
+                                    year = DateTime.Now.Year
+                                });
+                    defaultList.Add(Default);
+                    
+                    return defaultList;
+                }
                 return yearList;
             }
 

@@ -34,8 +34,8 @@ namespace spsServerAPI.Database.spsMigrations
             spsServerAPI.Models.ApplicationDbContext appUserDb = new Models.ApplicationDbContext();
 
             // get all the users registered and see if there is a student reord for them
-            var userStore = new UserStore<ApplicationUser>(appUserDb);
-            var userManager = new ApplicationUserManager(userStore);
+            var userStore = new ApplicationUserStore(appUserDb);
+            var userManager = new ApplicationUserManager(userStore); 
             var users = userManager.Users;
             foreach (var item in users)
             {

@@ -242,18 +242,19 @@
     <Compile Include="Controllers\PlacementsController.cs" />
     <Compile Include="Controllers\PlacementTypesController.cs" />
     <Compile Include="Controllers\ProgrammesController.cs" />
+    <Compile Include="Controllers\RefreshTokensController.cs" />
     <Compile Include="Controllers\StudentPlacementsController.cs" />
     <Compile Include="Controllers\StudentsController.cs" />
     <Compile Include="Controllers\TutorsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="Database\spsMigrations\201412071216045_InitialspsMigration.cs" />
-    <Compile Include="Database\spsMigrations\201412071216045_InitialspsMigration.Designer.cs">
-      <DependentUpon>201412071216045_InitialspsMigration.cs</DependentUpon>
+    <Compile Include="Database\spsMigrations\201501021505107_initial.cs" />
+    <Compile Include="Database\spsMigrations\201501021505107_initial.Designer.cs">
+      <DependentUpon>201501021505107_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Database\spsMigrations\Configuration.cs" />
-    <Compile Include="Database\UserManagementMigrations\201412071214246_InitialUserMigration.cs" />
-    <Compile Include="Database\UserManagementMigrations\201412071214246_InitialUserMigration.Designer.cs">
-      <DependentUpon>201412071214246_InitialUserMigration.cs</DependentUpon>
+    <Compile Include="Database\UserManagementMigrations\201501021456049_initial.cs" />
+    <Compile Include="Database\UserManagementMigrations\201501021456049_initial.Designer.cs">
+      <DependentUpon>201501021456049_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Database\UserManagementMigrations\Configuration.cs" />
     <Compile Include="Global.asax.cs">
@@ -262,7 +263,11 @@
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AllowablePlacement.cs" />
+    <Compile Include="Models\AuthContext.cs" />
+    <Compile Include="Models\AuthRepository.cs" />
     <Compile Include="Models\AvailablePlacementsView.cs" />
+    <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Enum.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\Placement.cs" />
@@ -278,6 +283,7 @@
     <Compile Include="Models\ProgrammeStage.cs" />
     <Compile Include="Models\ProgrammeStagesView.cs" />
     <Compile Include="Models\ProvidersNameListView.cs" />
+    <Compile Include="Models\RefreshToken.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\StudentPlacement.cs" />
     <Compile Include="Models\StudentProgrammeStage.cs" />
@@ -285,6 +291,7 @@
     <Compile Include="Models\TutorVisit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
+    <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -369,11 +376,11 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Database\spsMigrations\201412071216045_InitialspsMigration.resx">
-      <DependentUpon>201412071216045_InitialspsMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Database\spsMigrations\201501021505107_initial.resx">
+      <DependentUpon>201501021505107_initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Database\UserManagementMigrations\201412071214246_InitialUserMigration.resx">
-      <DependentUpon>201412071214246_InitialUserMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Database\UserManagementMigrations\201501021456049_initial.resx">
+      <DependentUpon>201501021456049_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

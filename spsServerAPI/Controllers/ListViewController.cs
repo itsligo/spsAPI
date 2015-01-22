@@ -1,4 +1,5 @@
-﻿using spsServerAPI.Models;
+﻿using Microsoft.AspNet.Identity;
+using spsServerAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ using System.Web.Http.Cors;
 namespace spsAPI.Controllers
 {
     [AllowAnonymous]
+    //[HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
+    //[Authorize(Roles = "admin")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/Views")]
     public class ListViewController : ApiController
@@ -23,7 +26,6 @@ namespace spsAPI.Controllers
         {
             return db.PlacementTypeListViews;
         }
-
         [Route("GetPlacements/{year:int}")]
         public IQueryable<PlacementView> GetPlacements(int? year)
         {
@@ -68,6 +70,7 @@ namespace spsAPI.Controllers
             return db.ProgrammeListViews;
         }
 
+        
         [Route("GetProgrammeStages")]
         public IQueryable<ProgrammeStagesView> GetProgrammeStages()
         {

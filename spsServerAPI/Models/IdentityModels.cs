@@ -4,178 +4,129 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using System.Data.Entity;
-using System.Web;
 using System;
+using System.ComponentModel.DataAnnotations;
+using spsServerAPI.Database.UserManagementMigrations;
 
 namespace spsServerAPI.Models
 {
-    // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
-    public class ApplicationUser : IdentityUser
+
+    // You will not likely need to customize there, but it is necessary/easier to create our own 
+    // project-specific implementations, so here they are:
+    public class ApplicationUserLogin : IdentityUserLogin<string> { }
+    public class ApplicationUserClaim : IdentityUserClaim<string> { }
+    public class ApplicationUserRole : IdentityUserRole<string> { }
+
+    // Must be expressed in terms of our custom Role and other types:
+    public class ApplicationUser
+        : IdentityUser<string, ApplicationUserLogin,
+        ApplicationUserRole, ApplicationUserClaim>
     {
-        public int ProgrammeStageID { get; set; }
-        public bool Approved { get; set; }
-        public string FirstName { get; set; }
-        public string SecondName { get; set; }
+        public ApplicationUser()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
 
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
+        // ** Add authenticationtype as method parameter:
+        public async Task<ClaimsIdentity>
+            GenerateUserIdentityAsync(ApplicationUserManager manager, string authenticationType)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
             // Add custom user claims here
             return userIdentity;
         }
+        public int ProgrammeStageID { get; set; }
+        public bool Approved { get; set; }
+        public string FirstName { get; set; }
+        public string SecondName { get; set; }
+
+        //public string Address { get; set; }
+        //public string City { get; set; }
+        //public string State { get; set; }
+        //public string PostalCode { get; set; }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+
+    // Must be expressed in terms of our custom UserRole:
+    public class ApplicationRole : IdentityRole<string, ApplicationUserRole>
     {
-        public ApplicationDbContext()
-            : base("spsModel", throwIfV1Schema: false)
+        public ApplicationRole()
         {
-         
+            this.Id = Guid.NewGuid().ToString();
         }
 
-        //static ApplicationDbContext()
-        //{
-        //    // Set the database intializer which is run once during application start
-        //    // This seeds the database with admin user credentials and admin role
-        //    //Database.SetInitializer<ApplicationDbContext>(new ApplicationDbInitializer());
-        //}
+        public ApplicationRole(string name)
+            : this()
+        {
+            this.Name = name;
+        }
+
+        public string Description { get; set; }
+    }
+
+
+    // Must be expressed in terms of our custom types:
+    public class ApplicationDbContext
+        : IdentityDbContext<ApplicationUser, ApplicationRole,
+        string, ApplicationUserLogin, ApplicationUserRole, ApplicationUserClaim>
+    {
+        public ApplicationDbContext()
+            : base("spsModel")
+        {
+        }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+        static ApplicationDbContext()
+        {
+            //System.Data.Entity.Database.SetInitializer<ApplicationDbContext>(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Configuration>());
+        }
 
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
+
+        // Add additional items here as needed
     }
-    public class ApplicationDbInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext>
+
+    // Most likely won't need to customize these either, but they were needed because we implemented
+    // custom versions of all the other types:
+    public class ApplicationUserStore
+        : UserStore<ApplicationUser, ApplicationRole, string,
+            ApplicationUserLogin, ApplicationUserRole,
+            ApplicationUserClaim>, IUserStore<ApplicationUser, string>,
+        IDisposable
     {
-
-        protected override void Seed(ApplicationDbContext context)
+        public ApplicationUserStore()
+            : this(new IdentityDbContext())
         {
-            InitializeIdentityForEF(context);
-            base.Seed(context);
+            base.DisposeContext = true;
         }
 
-        //Create Users and roles
-        public static void InitializeIdentityForEF(ApplicationDbContext db)
+        public ApplicationUserStore(DbContext context)
+            : base(context)
         {
-            // load in entities to retrieve spsEntities for programme stage assignment
-            Model spsdb = new Model();
-
-            var userManager =
-                HttpContext.Current.GetOwinContext()
-                    .GetUserManager<ApplicationUserManager>();
-
-            var roleManager =
-                HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
-
-            const string adminName = "powell.paul@itsligo.ie";
-            const string password = "Admin$1";
-            string[] roleNames = new string[4] { "admin", "student", "tutor", "unapproved" };
-
-            #region Create Roles
-            //Create Roles if they do not exist       
-            foreach (string roleName in roleNames)
-            {
-                var role = roleManager.FindByName(roleName);
-                if (role == null)
-                {
-                    role = new IdentityRole(roleName);
-                    var roleresult = roleManager.Create(role);
-                }
-            }
-            #endregion
-            #region Create Admin Account
-            // Create admin user
-            var user = userManager.FindByName(adminName);
-            if (user == null)
-            {
-                user = new ApplicationUser
-                {
-                    UserName = adminName,
-                    FirstName = "Paul",
-                    SecondName = "Powell",
-                    Approved = true,
-                    ProgrammeStageID = 0,
-                    Email = adminName
-                };
-                var result = userManager.Create(user, password);
-                result = userManager.SetLockoutEnabled(user.Id, false);
-            }
-
-            // Add user admin to Role Admin if not already added         
-            var rolesForUser = userManager.GetRoles(user.Id);
-            if (!rolesForUser.Contains(roleNames[0]))
-            {
-                var result = userManager.AddToRole(user.Id, roleNames[0]);
-            }
-            #endregion
-
-            #region Create student test accounts
-            PasswordHasher p = new PasswordHasher();
-            //string adminPass = p.HashPassword("Admin$1");
-            // Create 10 test users:
-            Random r = new Random();
-            int count = 0;
-            spsdb.ProgrammeStages.CountAsync().ContinueWith((cont) => { count = cont.Result; });
-            for (int i = 0; i < 10; i++)
-            {
-                var student = new ApplicationUser()
-                {
-
-                    UserName = string.Format("S000009{0}@mail.itsligo.ie", i.ToString()),
-                    PasswordHash = p.HashPassword("S000009" + i.ToString()),
-                    Email = string.Format("S000009{0}@mail.itsligo.ie", i.ToString()),
-                    Approved = false,
-                    FirstName = "Student First name " + i.ToString(),
-                    SecondName = "Student Second name " + i.ToString(),
-                    ProgrammeStageID = r.Next(1, count),
-                    LockoutEnabled = false
-                };
-
-                //spsdb.Students.Add(new Student { SID = string.Format("S000009{0}", i.ToString())  });
-
-                IdentityResult studentResult = userManager.Create(student);
-                if (studentResult.Succeeded)
-                {
-                    var rolesForStudent = userManager.GetRoles(student.Id);
-                    if (rolesForStudent == null || !rolesForStudent.Contains(roleNames[3]))
-                    {
-                        var result = userManager.AddToRole(student.Id, roleNames[3]);
-                    }
-                }
-
-            }
-            #endregion
-            #region Create Tutors
-            // Create Tutors
-            for (int i = 0; i < 4; i++)
-            {
-                var tutor = new ApplicationUser()
-                {
-                    UserName = string.Format("tutor{0}@mail.itsligo.ie", i.ToString()),
-                    FirstName = "Tutor First name " + i.ToString(),
-                    SecondName = "Tutor Second name " + i.ToString(),
-                    PasswordHash = p.HashPassword("Tutor$" + i.ToString()),
-                    Email = string.Format("tutor{0}@mail.itsligo.ie", i.ToString()),
-                    Approved = true,
-                    LockoutEnabled = false
-                };
-                userManager.Create(tutor);
-
-
-                //manager.Create(user, string.Format("S000009{0}", i.ToString()));
-
-                var rolesForTutor = userManager.GetRoles(tutor.Id);
-                if (rolesForTutor == null || !rolesForTutor.Contains(roleNames[2]))
-                {
-                    var result = userManager.AddToRole(tutor.Id, roleNames[2]);
-                }
-
-            }
-            #endregion
         }
     }
 
 
+    public class ApplicationRoleStore
+    : RoleStore<ApplicationRole, string, ApplicationUserRole>,
+    IQueryableRoleStore<ApplicationRole, string>,
+    IRoleStore<ApplicationRole, string>, IDisposable
+    {
+        public ApplicationRoleStore()
+            : base(new IdentityDbContext())
+        {
+            base.DisposeContext = true;
+        }
+
+        public ApplicationRoleStore(DbContext context)
+            : base(context)
+        {
+        }
+    }
 }

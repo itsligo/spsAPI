@@ -8,6 +8,7 @@ using Newtonsoft.Json.Serialization;
 using System.Net.Http.Formatting;
 using Newtonsoft.Json;
 using System.Web.Http.Cors;
+using spsServerAPI.Providers;
 
 namespace spsServerAPI
 {

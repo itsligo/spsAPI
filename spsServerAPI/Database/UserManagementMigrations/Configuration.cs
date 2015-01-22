@@ -1,13 +1,15 @@
 namespace spsServerAPI.Database.UserManagementMigrations
 {
     using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using spsServerAPI.Models;
-using System;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
-using System.Linq;
-using System.Web;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using spsServerAPI.Models;
+    using spsServerAPI.Providers;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Data.Entity.Migrations;
+    using System.Linq;
+    using System.Web;
 
     internal sealed class Configuration : DbMigrationsConfiguration<spsServerAPI.Models.ApplicationDbContext>
     {
@@ -19,42 +21,30 @@ using System.Web;
 
         protected override void Seed(spsServerAPI.Models.ApplicationDbContext context)
         {
-            spsServerAPI.Models.Model spsdb = new Model();
 
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            //spsServerAPI.Models.Model spsdb = new Model();
 
             #region setup Roles
             const string adminName = "spsAdmin@itsligo.ie";
             const string password = "Admin$1";
             string[] roleNames = new string[4] { "admin", "student", "tutor", "unapproved" };
-            var roleStore = new RoleStore<IdentityRole>(context);
-                var roleManager = new RoleManager<IdentityRole>(roleStore);
-                foreach (string roleName in roleNames)
-                    {
-                        var role = roleManager.FindByName(roleName);
-                        if (role == null)
-                        {
-                            role = new IdentityRole(roleName);
-                            var roleresult = roleManager.Create(role);
-                        }
-                    }
+            var roleStore = new ApplicationRoleStore(context);
+            var roleManager = new ApplicationRoleManager(roleStore);
+            foreach (string roleName in roleNames)
+            {
+                var role = roleManager.FindByName(roleName);
+                if (role == null)
+                {
+                    role = new ApplicationRole(roleName);
+                    var roleresult = roleManager.Create(role);
+                }
+            }
             #endregion
 
             #region Create Admin Account
-            // Create admin user
-                var userStore = new UserStore<ApplicationUser>(context);
-                var userManager = new ApplicationUserManager(userStore);
+             //Create admin user
+            var userStore = new ApplicationUserStore(context);
+            var userManager = new ApplicationUserManager(userStore);
 
             var user = userManager.FindByName(adminName);
             if (user == null)
@@ -72,7 +62,7 @@ using System.Web;
                 result = userManager.SetLockoutEnabled(user.Id, false);
             }
 
-            // Add user admin to Role Admin if not already added         
+             //Add user admin to Role Admin if not already added         
             var rolesForUser = userManager.GetRoles(user.Id);
             if (!rolesForUser.Contains(roleNames[0]))
             {
@@ -81,23 +71,22 @@ using System.Web;
             #endregion
             #region Create student test accounts
             PasswordHasher p = new PasswordHasher();
-            //string adminPass = p.HashPassword("Admin$1");
+            string adminPass = p.HashPassword("Admin$1");
             // Create 10 test users:
             Random r = new Random();
-            int count = 0;
-            spsdb.ProgrammeStages.CountAsync().ContinueWith((cont) => { count = cont.Result; });
+           // int count = 0;
+            //spsdb.ProgrammeStages.CountAsync().ContinueWith((cont) => { count = cont.Result; });
             for (int i = 0; i < 10; i++)
             {
                 var student = new ApplicationUser()
                 {
-
                     UserName = string.Format("S000009{0}@mail.itsligo.ie", i.ToString()),
                     PasswordHash = p.HashPassword("S000009" + i.ToString()),
                     Email = string.Format("S000009{0}@mail.itsligo.ie", i.ToString()),
                     Approved = false,
                     FirstName = "Student First name " + i.ToString(),
                     SecondName = "Student Second name " + i.ToString(),
-                    ProgrammeStageID = r.Next(1, count),
+                    //ProgrammeStageID = r.Next(1, count),
                     LockoutEnabled = false
                 };
 
@@ -116,7 +105,7 @@ using System.Web;
             }
             #endregion
             #region Create Tutors
-            // Create Tutors
+             //Create Tutors
             for (int i = 0; i < 4; i++)
             {
                 var tutor = new ApplicationUser()
@@ -132,7 +121,7 @@ using System.Web;
                 userManager.Create(tutor);
 
 
-                //manager.Create(user, string.Format("S000009{0}", i.ToString()));
+               // manager.Create(user, string.Format("S000009{0}", i.ToString()));
 
                 var rolesForTutor = userManager.GetRoles(tutor.Id);
                 if (rolesForTutor == null || !rolesForTutor.Contains(roleNames[2]))
@@ -142,8 +131,44 @@ using System.Web;
 
             }
             #endregion
+            if (context.Clients.CountAsync().Result > 0)
+            {
+                return;
+            }
+
+            context.Clients.AddRange(BuildClientsList());
+            context.SaveChanges();
+
+
         } // End Seed
 
+        private static List<Client> BuildClientsList()
+        {
+
+            List<Client> ClientsList = new List<Client> 
+            {
+                new Client
+                { Id = "ngAuthApp", 
+                    Secret= Helper.GetHash("abc@123"), 
+                    Name="AngularJS front-end Application", 
+                    ApplicationType =  Models.ApplicationTypes.JavaScript, 
+                    Active = true, 
+                    RefreshTokenLifeTime = 7200, 
+                    AllowedOrigin = "http://localhost:53848/"
+                },
+                new Client
+                { Id = "consoleApp", 
+                    Secret=Helper.GetHash("123@abc"), 
+                    Name="Console Application", 
+                    ApplicationType =Models.ApplicationTypes.NativeConfidential, 
+                    Active = true, 
+                    RefreshTokenLifeTime = 14400, 
+                    AllowedOrigin = "*"
+                }
+            };
+
+            return ClientsList;
+        }
 
     }
 }

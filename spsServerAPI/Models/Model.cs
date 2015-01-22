@@ -12,7 +12,6 @@ namespace spsServerAPI.Models
         {
             this.Configuration.LazyLoadingEnabled = false;
         }
-
         public virtual DbSet<AllowablePlacement> AllowablePlacements { get; set; }
         public virtual DbSet<Placement> Placements { get; set; }
         public virtual DbSet<PlacementProvider> PlacementProviders { get; set; }

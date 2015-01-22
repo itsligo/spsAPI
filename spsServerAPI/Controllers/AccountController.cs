@@ -16,15 +16,21 @@ using Microsoft.Owin.Security.OAuth;
 using spsServerAPI.Models;
 using spsServerAPI.Providers;
 using spsServerAPI.Results;
+using System.Data.Entity;
+
 
 namespace spsServerAPI.Controllers
 {
+
+    
+    //[Authorize(Roles = "admin")]
     [Authorize]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
+        ApplicationDbContext autDb = new ApplicationDbContext();
 
         public AccountController()
         {
@@ -53,16 +59,28 @@ namespace spsServerAPI.Controllers
 
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [Authorize(Roles = "admin")]    
         [Route("UserInfo")]
         public UserInfoViewModel GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-
+            ClaimsPrincipal principal = HttpContext.Current.User as ClaimsPrincipal;
+            //Dictionary<string,string> c = new Dictionary<string,string>();
+            List<string> c = new List<string>();
+            if (null != principal)
+            {
+                foreach (Claim claim in principal.Claims)
+                {
+                    if (claim.Type.Contains("role"))
+                        c.Add(claim.Value);
+                }
+            }
             return new UserInfoViewModel
             {
                 Email = User.Identity.GetUserName(),
                 HasRegistered = externalLogin == null,
-                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
+                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null,
+                roles= c
             };
         }
 
@@ -78,16 +96,15 @@ namespace spsServerAPI.Controllers
         [Route("ManageInfo")]
         public async Task<ManageInfoViewModel> GetManageInfo(string returnUrl, bool generateState = false)
         {
-            IdentityUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-
+            ApplicationUser user =
+                    await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null)
             {
                 return null;
             }
 
             List<UserLoginInfoViewModel> logins = new List<UserLoginInfoViewModel>();
-
-            foreach (IdentityUserLogin linkedAccount in user.Logins)
+            foreach (ApplicationUserLogin linkedAccount in user.Logins)
             {
                 logins.Add(new UserLoginInfoViewModel
                 {
@@ -258,12 +275,15 @@ namespace spsServerAPI.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
                  ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
-
+                // cannot iterate over roles 
+                //List<Claim> roles = oAuthIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).ToList();
+                //AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(
+                //    user.UserName,
+                //    Newtonsoft.Json.JsonConvert.SerializeObject(roles.Select(x => x.Value)));
                 AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
                 Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
@@ -328,7 +348,7 @@ namespace spsServerAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, Approved = false };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
@@ -338,6 +358,20 @@ namespace spsServerAPI.Controllers
             }
 
             return Ok();
+        }
+
+        
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [Authorize(Roles="tutor")]
+        [Route("GetUnauthorised")]
+        public dynamic GetUnauthorised()
+        {
+            IDbSet<ApplicationUser> unApproved = autDb.Users;
+
+                foreach (ApplicationUser user in autDb.Users)
+                    if (user.Approved == false)
+                        unApproved.Add(user);
+            return unApproved;
         }
 
         // POST api/Account/RegisterExternal
@@ -377,7 +411,8 @@ namespace spsServerAPI.Controllers
         {
             if (disposing)
             {
-                UserManager.Dispose();
+                if(UserManager != null)
+                    UserManager.Dispose();
             }
 
             base.Dispose(disposing);

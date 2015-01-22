@@ -7,13 +7,13 @@ namespace spsServerAPI.Database.UserManagementMigrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.1-30610")]
-    public sealed partial class InitialUserMigration : IMigrationMetadata
+    public sealed partial class initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialUserMigration));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201412071214246_InitialUserMigration"; }
+            get { return "201501021456049_initial"; }
         }
         
         string IMigrationMetadata.Source
