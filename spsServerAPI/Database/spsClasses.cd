@@ -3,7 +3,7 @@
   <Class Name="spsServerAPI.Models.Model" Collapsed="true">
     <Position X="2.5" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ACIAAAAAAAAAAAACAAAAAAAcEAEAAgAAAiAAAAAFAAA=</HashCode>
+      <HashCode>ACIAAAAAAAAAAABCAAAAAIAcEQEAAgAAAiBAAAAXgAE=</HashCode>
       <FileName>Models\Model.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -17,7 +17,7 @@
   <Class Name="spsServerAPI.Models.PlacementProvider" Collapsed="true">
     <Position X="8.5" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAJBAAAAAEAAAIAAAAAAQAAAIAAEAAAAAAAAAUAAQ=</HashCode>
+      <HashCode>AAQABBAAAAAEAAAIAAAAAAQAAAIAAgAAAAAAAAAUAAA=</HashCode>
       <FileName>Models\PlacementProvider.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -56,14 +56,14 @@
       <FileName>Models\ProgrammeStage.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="spsServerAPI.Models.Student" Collapsed="true">
-    <Position X="10.25" Y="2" Width="1.5" />
+  <Class Name="spsServerAPI.Models.Student">
+    <Position X="13" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAEgAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAABAAAA=</HashCode>
       <FileName>Models\Student.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="spsServerAPI.Models.StudentPlacement" Collapsed="true">
+  <Class Name="spsServerAPI.Models.StudentPlacement">
     <Position X="5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEQAEAAAAAAAAAAAoAABkAAAAAASAAAABAAAA=</HashCode>
@@ -92,14 +92,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.ApplicationDbContext">
-    <Position X="2.5" Y="5" Width="1.5" />
+    <Position X="2.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAIAAAAAACAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\IdentityModels.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.ApplicationUser">
-    <Position X="4.75" Y="4.75" Width="1.5" />
+    <Position X="0.5" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEgCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Models\IdentityModels.cs</FileName>

@@ -28,12 +28,12 @@ namespace spsServerAPI
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
-            //HttpConfiguration config = new HttpConfiguration();
+            HttpConfiguration config = new HttpConfiguration();
             //ConfigureOAuth(app);
-            //WebApiConfig.Register(config); // see call back below. Once again too many ways of doing the same thing!!!
-            //app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+            WebApiConfig.Register(config); // see call back below. Once again too many ways of doing the same thing!!!
+            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             // for OWIN auth and serialisation
-            //app.UseWebApi(config);
+            app.UseWebApi(config);
 
             // Configure the db context and user manager to use a single instance per request
             app.CreatePerOwinContext(ApplicationDbContext.Create);
