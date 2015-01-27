@@ -31,7 +31,7 @@ namespace spsServerAPI
             HttpConfiguration config = new HttpConfiguration();
             //ConfigureOAuth(app);
             WebApiConfig.Register(config); // see call back below. Once again too many ways of doing the same thing!!!
-            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+            //app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             // for OWIN auth and serialisation
             app.UseWebApi(config);
 
