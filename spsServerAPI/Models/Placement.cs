@@ -51,7 +51,7 @@ namespace spsServerAPI.Models
 
         public virtual PlacementProvider PlacementProvider { get; set; }
 
-        public virtual PlacementType PlacementType1 { get; set; }
+        public virtual PlacementType PlacementTypeRef { get; set; }
 
         public virtual ICollection<StudentPlacement> StudentPlacements { get; set; }
     }

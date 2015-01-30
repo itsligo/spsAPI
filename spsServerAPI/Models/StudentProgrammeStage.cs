@@ -18,6 +18,9 @@ namespace spsServerAPI.Models
 
         public int? ProgrammeStageID { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime Year { get; set; }
+
         public virtual ProgrammeStage ProgrammeStage { get; set; }
 
         public virtual Student Student { get; set; }

@@ -48,7 +48,7 @@ namespace spsServerAPI.Models
 
             modelBuilder.Entity<PlacementType>()
                 .HasMany(e => e.Placements)
-                .WithOptional(e => e.PlacementType1)
+                .WithOptional(e => e.PlacementTypeRef)
                 .HasForeignKey(e => e.PlacementType);
 
             modelBuilder.Entity<Programme>()
