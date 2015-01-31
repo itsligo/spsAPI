@@ -44,7 +44,7 @@ namespace spsServerAPI.Controllers
 
 
         // GET: api/PlacementProviders/5
-        [Route("api/PlacementProvider/{id:int}")]
+        [Route("PlacementProvider/{id:int}")]
         [ResponseType(typeof(PlacementProvider))]
         public IHttpActionResult GetPlacementProvider(int id)
         {
@@ -57,7 +57,7 @@ namespace spsServerAPI.Controllers
             return Ok(placementProvider);
         }
 
-        [Route("api/PlacementProviders/{pname:alpha}")]
+        [Route("PlacementProviders/{pname:alpha}")]
         [ResponseType(typeof(List<PlacementProvider>))]
         public IHttpActionResult GetPlacementProvider(string pname)
         {
@@ -72,7 +72,7 @@ namespace spsServerAPI.Controllers
 
         // PUT: api/PlacementProvider/5
         [ResponseType(typeof(void))]
-        [Route("api/PutPlacementProvider/{id:int}")]
+        [Route("PutPlacementProvider/{id:int}")]
         public IHttpActionResult PutPlacementProvider(int id, PlacementProvider placementProvider)
         {
             if (!ModelState.IsValid)
@@ -108,7 +108,7 @@ namespace spsServerAPI.Controllers
 
         // POST: api/PlacementProviders
         [ResponseType(typeof(PlacementProvider))]
-        [Route("api/PostPlacementProvider")]
+        [Route("PostPlacementProvider")]
         public IHttpActionResult PostPlacementProvider(PlacementProvider placementProvider)
         {
             if (!ModelState.IsValid)
@@ -140,7 +140,7 @@ namespace spsServerAPI.Controllers
 
         // DELETE: api/PlacementProviders/5
         [ResponseType(typeof(PlacementProvider))]
-        [Route("api/DeletePlacementProvider/{id:int}")]
+        [Route("DeletePlacementProvider/{id:int}")]
         public IHttpActionResult DeletePlacementProvider(int id)
         {
             PlacementProvider placementProvider = db.PlacementProviders.Find(id);

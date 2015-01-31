@@ -29,6 +29,14 @@ namespace spsServerAPI.Controllers
             return db.Programmes;
         }
 
+        //GetProgrammesRaw
+        // GET: api/Programmes
+        [Route("GetProgrammesRaw")]
+        public IQueryable<Programme> GetProgrammesRaw()
+        {
+            return db.Programmes.Include("ProgrammeStage");
+        }
+
         [Route("GetProgrammesListWithStages")]
         public dynamic GetProgrammesListWithStages()
         {

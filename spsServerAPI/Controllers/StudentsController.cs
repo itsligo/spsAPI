@@ -16,20 +16,20 @@ namespace spsServerAPI.Controllers
 {
     [AllowAnonymous]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-
+    [RoutePrefix("api/Students")]
     public class StudentsController : ApiController
     {
         private Model db = new Model();
 
         // GET: api/Students
-        [Route("api/GetStudents")]
+        [Route("GetStudents")]
         public IQueryable<Student> GetStudents()
         {
             return db.Students;
         }
 
         // GET: api/Students/5
-        [Route("api/GetStudent/{id:int}")]
+        [Route("GetStudent/{id:int}")]
         [ResponseType(typeof(Student))]
         public async Task<IHttpActionResult> GetStudent(string id)
         {
@@ -41,10 +41,22 @@ namespace spsServerAPI.Controllers
 
             return Ok(student);
         }
+        [Route("GetStudentYearsList")]
+        public dynamic GetStudentYearsList()
+        {
+            var yearList = (from p in db.StudentProgrammeStages
+                            where p.Year.Year != null
+                            select new
+                            {
+                                id = p.Year.Year,
+                                year = p.Year.Year
+                            }).Distinct();
+            return yearList;
+        }
 
         // PUT: api/Students/5
         [ResponseType(typeof(void))]
-        [Route("api/PutStudent/{id:int}")]
+        [Route("PutStudent/{id:int}")]
         public async Task<IHttpActionResult> PutStudent(string id, Student student)
         {
             if (!ModelState.IsValid)
@@ -80,7 +92,7 @@ namespace spsServerAPI.Controllers
 
         // POST: api/Students
         [ResponseType(typeof(Student))]
-        [Route("api/PostStudent")]
+        [Route("PostStudent")]
         public async Task<IHttpActionResult> PostStudent(Student student)
         {
             if (!ModelState.IsValid)
@@ -111,7 +123,7 @@ namespace spsServerAPI.Controllers
 
         // DELETE: api/Students/5
         [ResponseType(typeof(Student))]
-        [Route("api/DeleteStudent/{id:int}")]
+        [Route("DeleteStudent/{id:int}")]
         public async Task<IHttpActionResult> DeleteStudent(string id)
         {
             Student student = await db.Students.FindAsync(id);
