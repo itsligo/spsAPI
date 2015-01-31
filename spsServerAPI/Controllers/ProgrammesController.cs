@@ -34,7 +34,7 @@ namespace spsServerAPI.Controllers
         [Route("GetProgrammesRaw")]
         public IQueryable<Programme> GetProgrammesRaw()
         {
-            return db.Programmes.Include("ProgrammeStage");
+            return db.Programmes.Include("ProgrammeStages");
         }
 
         [Route("GetProgrammesListWithStages")]
