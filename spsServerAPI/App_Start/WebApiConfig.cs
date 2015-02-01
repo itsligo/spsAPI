@@ -36,6 +36,9 @@ namespace spsServerAPI
                 routeTemplate: "api/{controller}/{id:alpha}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            
+
             //GlobalConfiguration.Configuration.Formatters.Clear();
             //GlobalConfiguration.Configuration.Formatters.Add(new JsonMediaTypeFormatter()
             //{

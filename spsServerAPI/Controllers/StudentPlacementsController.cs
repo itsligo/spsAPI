@@ -11,27 +11,47 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using spsServerAPI.Models;
 using System.Web.Http.Cors;
+using System.Web.Http.Results;
 
 namespace spsServerAPI.Controllers
 {
     [AllowAnonymous]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-
+    [RoutePrefix("api/StudentPlacements")]
     public class StudentPlacementsController : ApiController
     {
         private Model db = new Model();
 
         // GET: api/StudentPlacements
-        [Route("api/GetStudentPlacements")]        
+        [Route("GetStudentPlacements")]        
 
         public IQueryable<StudentPlacement> GetStudentPlacements()
         {
             return db.StudentPlacements;
         }
 
+
+        //get: GetStudentPlacementByStudentID
+        [ResponseType(typeof(List<StudentPlacement>))]
+        [Route("GetStudentPlacementByStudentID/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
+
+        public async Task<IHttpActionResult> GetStudentPlacementByStudentID(string id)
+        {
+            var studentPlacements = db.StudentPlacements
+                                        .OrderBy(sp => sp.SPID)
+                                            .Where(sp => sp.SID == id)
+                                            .Select(sp => sp);
+            if (studentPlacements.Count() == 0)
+            {
+                return NotFound();
+            }
+            return Ok(studentPlacements.ToList());
+        }
+
+
         // GET: api/StudentPlacements/5
         [ResponseType(typeof(StudentPlacement))]
-        [Route("api/GetStudentPlacement/{id:int}")]
+        [Route("GetStudentPlacement/{id:int}")]
 
         public async Task<IHttpActionResult> GetStudentPlacement(int id)
         {
@@ -46,7 +66,7 @@ namespace spsServerAPI.Controllers
 
         // PUT: api/StudentPlacements/5
         [ResponseType(typeof(void))]
-        [Route("api/PutStudentPlacement/{id:int}")]
+        [Route("PutStudentPlacement/{id:int}")]
 
         public async Task<IHttpActionResult> PutStudentPlacement(int id, StudentPlacement studentPlacement)
         {
@@ -81,9 +101,12 @@ namespace spsServerAPI.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+
+
+
         // POST: api/StudentPlacements
         [ResponseType(typeof(StudentPlacement))]
-        [Route("api/PostStudentPlacement")]
+        [Route("PostStudentPlacement")]
 
         public async Task<IHttpActionResult> PostStudentPlacement(StudentPlacement studentPlacement)
         {
@@ -91,6 +114,12 @@ namespace spsServerAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
+            // Check for preferences exceeded
+            var currentStudentPlacements = db.StudentPlacements.Select(sp => sp.SID == studentPlacement.SID);
+            if (currentStudentPlacements.Count() > 2)
+                throw BadRequest("Preferences cannot be more than " + 
+                                    currentStudentPlacements.Count().ToString());
 
             db.StudentPlacements.Add(studentPlacement);
 
@@ -110,12 +139,12 @@ namespace spsServerAPI.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = studentPlacement.SPID }, studentPlacement);
+            return Ok(studentPlacement);
         }
 
         // DELETE: api/StudentPlacements/5
         [ResponseType(typeof(StudentPlacement))]
-        [Route("api/DeleteStudentPlacement/{id:int}")]
+        [Route("DeleteStudentPlacement/{id:int}")]
         public async Task<IHttpActionResult> DeleteStudentPlacement(int id)
         {
             StudentPlacement studentPlacement = await db.StudentPlacements.FindAsync(id);
@@ -142,6 +171,45 @@ namespace spsServerAPI.Controllers
         private bool StudentPlacementExists(int id)
         {
             return db.StudentPlacements.Count(e => e.SPID == id) > 0;
+        }
+
+        /// <summary>
+        /// creates an <see cref="HttpResponseException"/> with a response code of 400
+        /// and places the reason in the reason header and the body.
+        /// </summary>
+        /// <param name="reason">Explanation text for the client.</param>
+        /// <returns>A new HttpResponseException</returns>
+        protected HttpResponseException BadRequest(string reason)
+        {
+            return CreateHttpResponseException(reason, HttpStatusCode.BadRequest);
+        }
+
+        /// <summary>
+        /// creates an <see cref="HttpResponseException"/> with a response code of 404
+        /// and places the reason in the reason header and the body.
+        /// </summary>
+        /// <param name="reason">Explanation text for the client.</param>
+        /// <returns>A new HttpResponseException</returns>
+        protected HttpResponseException NotFound(string reason)
+        {
+            return CreateHttpResponseException(reason, HttpStatusCode.NotFound);
+        }
+
+        /// <summary>
+        /// Creates an <see cref="HttpResponseException"/> to be thrown by the api.
+        /// </summary>
+        /// <param name="reason">Explanation text, also added to the body.</param>
+        /// <param name="code">The HTTP status code.</param>
+        /// <returns>A new <see cref="HttpResponseException"/></returns>
+        private static HttpResponseException CreateHttpResponseException(string reason, HttpStatusCode code)
+        {
+            var response = new HttpResponseMessage
+            {
+                StatusCode = code,
+                ReasonPhrase = reason,
+                Content = new StringContent(reason)
+            };
+            throw new HttpResponseException(response);
         }
     }
 }
