@@ -29,6 +29,16 @@ namespace spsServerAPI.Controllers
             return returned;
         }
 
+        [Route("GetPlacementsByYear/{year:int}")]
+        public dynamic GetPlacements(int year)
+        {
+            var returned = db.Placements
+                .Where(p => p.StartDate.Value.Year == year);
+            return returned;
+        }
+
+
+
         [Route("GetPlacementsAllowableForStudent/{studentId}")]
         public dynamic GetPlacementsAllowableForStudent(string studentId)
         {

@@ -16,13 +16,13 @@ namespace spsServerAPI.Controllers
 {
     [AllowAnonymous]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    
+    [RoutePrefix("api/PlacementTypes")]
     public class PlacementTypesController : ApiController
     {
         private Model db = new Model();
 
         // GET: api/PlacementTypes
-        [Route("api/GetPlacementTypes")]
+        [Route("GetPlacementTypes")]
         public dynamic GetPlacementTypes()
         {
             var placementTypes = (from pt in db.PlacementTypes
@@ -33,7 +33,7 @@ namespace spsServerAPI.Controllers
 
         // GET: api/PlacementTypes/5
         [ResponseType(typeof(PlacementType))]
-        [Route("api/GetPlacementType/{id:int}")]
+        [Route("GetPlacementType/{id:int}")]
         public async Task<dynamic> GetPlacementType(int id)
         {
             PlacementType placementType = await db.PlacementTypes.FindAsync(id);
@@ -51,7 +51,7 @@ namespace spsServerAPI.Controllers
 
         // PUT: api/PlacementTypes/5
         [ResponseType(typeof(void))]
-        [Route("api/PutPlacementType/{id:int}")]
+        [Route("PutPlacementType/{id:int}")]
         public async Task<IHttpActionResult> PutPlacementType(int id, PlacementType placementType)
         {
             if (!ModelState.IsValid)
@@ -87,7 +87,7 @@ namespace spsServerAPI.Controllers
 
         // POST: api/PlacementTypes
         [ResponseType(typeof(PlacementType))]
-        [Route("api/PostPlacementType")]
+        [Route("PostPlacementType")]
         public async Task<IHttpActionResult> PostPlacementType(PlacementType placementType)
         {
             if (!ModelState.IsValid)
@@ -116,8 +116,9 @@ namespace spsServerAPI.Controllers
             return Ok(placementType);
         }
 
-        // DELETE: api/PlacementTypes/5
+        // DELETE: PlacementTypes/5
         [ResponseType(typeof(PlacementType))]
+        [Route("DeletePlacementType/{id:int}")]
         public async Task<IHttpActionResult> DeletePlacementType(int id)
         {
             PlacementType placementType = await db.PlacementTypes.FindAsync(id);
