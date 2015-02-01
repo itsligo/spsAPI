@@ -77,16 +77,22 @@ namespace spsServerAPI.Controllers
         public dynamic GetStudentPlacementsInYear(string sid, int year)
         {
             return (from p in db.Placements
-                    join ap in db.AllowablePlacements
-                    on p.PlacementID equals ap.PlacementID
-                    join ps in db.ProgrammeStages
-                     on ap.ProgrammeStageID equals ps.Id
+                    join sp in db.StudentPlacements
+                    on p.PlacementID equals sp.PlacementID
                     join ss in db.StudentProgrammeStages
-                    on ps.Id equals ss.ProgrammeStageID
+                    on sp.SID equals ss.SID
                     join s in db.Students
-                    on  ss.SID equals s.SID
-                    where (s.SID == sid && ss.Year.Year == year)
-                    select p);
+                    on ss.SID equals s.SID
+                    where (s.SID == sid && ss.Year.Year == year && p.StartDate.Value.Year == year)
+                    select new
+                    {
+                        s.SID,
+                        s.FirstName,
+                        s.SecondName,
+                        Location = new { p.AddressLine1, p.AddressLine2, p.City, p.County, p.Country },
+                        p.StartDate,
+                        p.FinishDate
+                    });
         }
 
 
