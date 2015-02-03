@@ -43,7 +43,8 @@ namespace spsServerAPI.Controllers
             return (from programmes in db.Programmes
                     join stages in db.ProgrammeStages
                 on programmes.ProgrammeCode equals stages.ProgrammeCode
-                    select new { programmes.ProgrammeCode, programmes.ProgrammeName,stages.Stage});
+                    select new { programmes.ProgrammeCode, programmes.ProgrammeName,
+                            stages.Id,stages.Stage});
                 
         }
 
