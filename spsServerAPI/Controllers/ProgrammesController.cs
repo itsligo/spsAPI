@@ -80,10 +80,10 @@ namespace spsServerAPI.Controllers
 
         // GET: api/Programmes/5
         [ResponseType(typeof(Programme))]
-        [Route("GetProgramme/{id:int}")]
-        public async Task<IHttpActionResult> GetProgramme(string id)
+        [Route("GetProgramme/{name}")]
+        public async Task<IHttpActionResult> GetProgramme(string name)
         {
-            Programme programme = await db.Programmes.FindAsync(id);
+            Programme programme = await db.Programmes.FindAsync(name);
             if (programme == null)
             {
                 return NotFound();
@@ -94,15 +94,15 @@ namespace spsServerAPI.Controllers
 
         // PUT: api/Programmes/5
         [ResponseType(typeof(void))]
-        [Route("PutProgramme/{id:int}")]
-        public async Task<IHttpActionResult> PutProgramme(string id, Programme programme)
+        [Route("PutProgramme/{name}")]
+        public async Task<IHttpActionResult> PutProgramme(string name, Programme programme)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != programme.ProgrammeCode)
+            if (name != programme.ProgrammeCode)
             {
                 return BadRequest();
             }
@@ -115,7 +115,7 @@ namespace spsServerAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProgrammeExists(id))
+                if (!ProgrammeExists(name))
                 {
                     return NotFound();
                 }
@@ -162,10 +162,10 @@ namespace spsServerAPI.Controllers
 
         // DELETE: api/Programmes/5
         [ResponseType(typeof(Programme))]
-        [Route("DeleteProgramme/{id:int}")]
-        public async Task<IHttpActionResult> DeleteProgramme(string id)
+        [Route("DeleteProgramme/{name}")]
+        public async Task<IHttpActionResult> DeleteProgramme(string name)
         {
-            Programme programme = await db.Programmes.FindAsync(id);
+            Programme programme = await db.Programmes.FindAsync(name);
             if (programme == null)
             {
                 return NotFound();

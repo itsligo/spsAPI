@@ -64,10 +64,10 @@ namespace spsServerAPI.Controllers
                             where sps.Year.Year == year
                             select new
                             {
-                                SID = s.SID,
-                                FirsName = s.FirstName,
-                                SecondName = s.SecondName,
-                                ProgrammmeStageID = sps.ProgrammeStageID
+                                s.SID,
+                                s.FirstName,
+                                s.SecondName,
+                                sps.ProgrammeStageID
                             }).Distinct();
             return StudentsforYear;
         }

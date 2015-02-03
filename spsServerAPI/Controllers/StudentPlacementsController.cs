@@ -48,6 +48,20 @@ namespace spsServerAPI.Controllers
             return Ok(studentPlacements.ToList());
         }
 
+        // GET: api/StudentPlacementsByPlacementId/5
+        [ResponseType(typeof(List<StudentPlacement>))]
+        [Route("GetStudentPlacementsByPlacementId/{id:int}")]
+        public dynamic GetStudentPlacementsByPlacementId(int id)
+        {
+            var studentPlacements = db.StudentPlacements.Include("Placements").Where(sp => sp.PlacementID == id);
+            if (studentPlacements.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(studentPlacements.ToList());
+        }
+
 
         // GET: api/StudentPlacements/5
         [ResponseType(typeof(StudentPlacement))]
