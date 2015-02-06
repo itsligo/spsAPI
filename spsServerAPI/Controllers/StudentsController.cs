@@ -29,7 +29,7 @@ namespace spsServerAPI.Controllers
         }
 
         // GET: api/Students/5
-        [Route("GetStudent/{id:int}")]
+        [Route("GetStudent/{id}")]
         [ResponseType(typeof(Student))]
         public async Task<IHttpActionResult> GetStudent(string id)
         {
@@ -41,6 +41,30 @@ namespace spsServerAPI.Controllers
 
             return Ok(student);
         }
+
+        // GET: api/Students/5
+        [Route("GetStudentByIdForYear/SID/{id}/Year/{year:int}")]
+        public dynamic GetStudent(string id,int year)
+        {
+         var result =  (from s in db.Students
+             join sps in db.StudentProgrammeStages
+             on s.SID equals sps.SID
+             where sps.SID == id 
+             where sps.Year.Year == year
+             select new 
+             {
+                 s.SID, s.FirstName,s.SecondName,sps.ProgrammeStage
+             }
+            );
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
+
         [Route("GetStudentYearsList")]
         public dynamic GetStudentYearsList()
         {
