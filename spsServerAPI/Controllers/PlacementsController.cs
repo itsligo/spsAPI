@@ -145,7 +145,7 @@ namespace spsServerAPI.Controllers
             }
 
             db.Entry(placement).State = EntityState.Modified;
-
+            
             try
             {
                 db.SaveChanges();
@@ -162,7 +162,8 @@ namespace spsServerAPI.Controllers
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            //return StatusCode(HttpStatusCode.NoContent);
+            return Ok(placement);
         }
 
         // POST: api/Placements
