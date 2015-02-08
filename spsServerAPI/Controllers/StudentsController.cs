@@ -86,7 +86,7 @@ namespace spsServerAPI.Controllers
                                    join sps in db.StudentProgrammeStages
                                    on s.SID equals sps.SID
                                    join sp in db.StudentPlacements
-                                   on s.SID equals sp.SID
+                                   on sps.SID equals sp.SID
                             where sps.Year.Year == year
                             select new
                             {
