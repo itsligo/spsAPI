@@ -85,13 +85,16 @@ namespace spsServerAPI.Controllers
             var StudentsforYear = (from s in db.Students
                                    join sps in db.StudentProgrammeStages
                                    on s.SID equals sps.SID
+                                   join sp in db.StudentPlacements
+                                   on s.SID equals sp.SID
                             where sps.Year.Year == year
                             select new
                             {
                                 s.SID,
                                 s.FirstName,
                                 s.SecondName,
-                                sps.ProgrammeStageID
+                                sps.ProgrammeStageID,
+                                sp.Status
                             }).Distinct();
             return StudentsforYear;
         }

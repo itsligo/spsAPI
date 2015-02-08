@@ -32,7 +32,7 @@ namespace spsServerAPI.Controllers
         [Route("GetPlacementsByYear/{year:int}")]
         public dynamic GetPlacements(int year)
         {
-            var returned = db.Placements
+            var returned = db.Placements.Include("AllowablePlacements")
                 .Where(p => p.StartDate.Value.Year == year);
             return returned;
         }

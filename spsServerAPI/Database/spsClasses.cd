@@ -8,7 +8,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.Placement">
-    <Position X="11.25" Y="1.75" Width="1.5" />
+    <Position X="10.25" Y="1" Width="1.75" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAEGAEAKAACCAAQIAAIQAAAAAAAIAEAQAEA=</HashCode>
       <FileName>Models\Placement.cs</FileName>
@@ -50,14 +50,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.ProgrammeStage">
-    <Position X="6.75" Y="2.75" Width="1.5" />
+    <Position X="6.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAIAIAAAAAAAAEggAAAAAAAA=</HashCode>
       <FileName>Models\ProgrammeStage.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.Student">
-    <Position X="13" Y="3.5" Width="1.5" />
+    <Position X="6.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAEgAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAABAAAA=</HashCode>
       <FileName>Models\Student.cs</FileName>
@@ -73,19 +73,19 @@
   <Class Name="spsServerAPI.Models.StudentProgrammeStage">
     <Position X="2.75" Y="3.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBEAA=</HashCode>
+      <HashCode>AAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBEAA=</HashCode>
       <FileName>Models\StudentProgrammeStage.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.Tutor">
-    <Position X="9.75" Y="2.5" Width="1.5" />
+    <Position X="12.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAEgAAAAAAAAAAAAAAIAAABAAAAAAACAAQAAAAAA=</HashCode>
       <FileName>Models\Tutor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.TutorVisit">
-    <Position X="13" Y="0.75" Width="1.5" />
+    <Position X="12.25" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAAAAAEgAAAAAAAAAABkAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\TutorVisit.cs</FileName>
