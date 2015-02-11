@@ -40,11 +40,26 @@ namespace spsServerAPI.Controllers
                     select new
                     {
                         programme.ProgrammeCode,
-                        programme.ProgrammeName,
-                        Stage = programme.ProgrammeStages.Select(p => p.Stage)
-                        }
-                    );
+                        programme.ProgrammeName
+                        //Stage = programme.ProgrammeStages.Select(p => p.Stage)
+                    }
+                    ).Distinct();
  
+        }
+
+        [Route("GetProgrammeStages/{code}")]
+        public dynamic GetProgrammesRaw(string code)
+        {
+            return (from programme in db.Programmes
+                    join Stages in db.ProgrammeStages
+                        on programme.ProgrammeCode equals Stages.ProgrammeCode
+                        where programme.ProgrammeCode == code
+                    select new
+                    {
+                        Stages.Stage
+                    }
+                    );
+
         }
 
         [Route("GetProgrammesListWithStages")]

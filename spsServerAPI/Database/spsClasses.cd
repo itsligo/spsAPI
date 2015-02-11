@@ -35,8 +35,8 @@
       <FileName>Models\PlacementSupervisor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="spsServerAPI.Models.PlacementType">
-    <Position X="0.75" Y="3.25" Width="1.5" />
+  <Class Name="spsServerAPI.Models.PlacementType" Collapsed="true">
+    <Position X="0.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Models\PlacementType.cs</FileName>
@@ -99,7 +99,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="spsServerAPI.Models.ApplicationUser" Collapsed="true">
-    <Position X="0.5" Y="1.5" Width="1.5" />
+    <Position X="0.5" Y="1.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAEgCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Models\IdentityModels.cs</FileName>

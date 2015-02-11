@@ -50,7 +50,7 @@ namespace spsServerAPI.Controllers
              join sps in db.StudentProgrammeStages
              on s.SID equals sps.SID
              where sps.SID == id 
-             where sps.Year.Year == year
+             where sps.Year == year
              select new 
              {
                  s.SID, s.FirstName,s.SecondName,sps.ProgrammeStage
@@ -69,25 +69,25 @@ namespace spsServerAPI.Controllers
         public dynamic GetStudentYearsList()
         {
             var yearList = (from p in db.StudentProgrammeStages
-                            where p.Year.Year != null
+                            where p.Year != null
                             select new
                             {
-                                id = p.Year.Year,
-                                year = p.Year.Year
+                                id = p.Year,
+                                year = p.Year
                             }).Distinct();
             return yearList;
         }
 
-        //GetAllStudentsInYear/2016
-        [Route("GetAllStudentsInYear/{year:int}")]
-        public dynamic GetAllStudentsInYear(int year)
+        //GetAllStudentsInYearWithPlacements/2016
+        [Route("GetAllStudentsInYearWithPlacements/{year:int}")]
+        public dynamic GetAllStudentsInYearWithPlacements(int year)
         {
             var StudentsforYear = (from s in db.Students
                                    join sps in db.StudentProgrammeStages
                                    on s.SID equals sps.SID
                                    join sp in db.StudentPlacements
                                    on sps.SID equals sp.SID
-                            where sps.Year.Year == year
+                            where sps.Year == year
                             select new
                             {
                                 s.SID,
@@ -96,6 +96,23 @@ namespace spsServerAPI.Controllers
                                 sps.ProgrammeStageID,
                                 sp.Status
                             }).Distinct();
+            return StudentsforYear;
+        }
+
+        //GetAllStudentsInYearWithPlacements/2016
+        [Route("GetAllStudentsInYear/{year:int}")]
+        public dynamic GetAllStudentsInYear(int year)
+        {
+            var StudentsforYear = (from s in db.Students
+                                   join sps in db.StudentProgrammeStages
+                                   on s.SID equals sps.SID
+                                   select new
+                                   {
+                                       s.SID,
+                                       s.FirstName,
+                                       s.SecondName,
+                                       sps.ProgrammeStageID
+                                   });
             return StudentsforYear;
         }
 
@@ -110,7 +127,7 @@ namespace spsServerAPI.Controllers
                     on sp.SID equals ss.SID
                     join s in db.Students
                     on ss.SID equals s.SID
-                    where (s.SID == sid && ss.Year.Year == year && p.StartDate.Value.Year == year)
+                    where (s.SID == sid && ss.Year == year && p.StartDate.Value.Year == year)
                     select new
                     {
                         s.SID,

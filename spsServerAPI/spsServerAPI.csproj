@@ -237,7 +237,6 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\importController.cs" />
-    <Compile Include="Controllers\ListViewController.cs" />
     <Compile Include="Controllers\PlacementProvidersController.cs" />
     <Compile Include="Controllers\PlacementsController.cs" />
     <Compile Include="Controllers\PlacementTypesController.cs" />
@@ -251,9 +250,9 @@
     <Compile Include="Database\spsMigrations\201501021505107_initial.Designer.cs">
       <DependentUpon>201501021505107_initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Database\spsMigrations\201501291221015_AddProgrammeStageYear.cs" />
-    <Compile Include="Database\spsMigrations\201501291221015_AddProgrammeStageYear.Designer.cs">
-      <DependentUpon>201501291221015_AddProgrammeStageYear.cs</DependentUpon>
+    <Compile Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.cs" />
+    <Compile Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.Designer.cs">
+      <DependentUpon>201502111233111_ChangeProgrammeStageYearToInt.cs</DependentUpon>
     </Compile>
     <Compile Include="Database\spsMigrations\Configuration.cs" />
     <Compile Include="Database\UserManagementMigrations\201501021456049_initial.cs" />
@@ -269,24 +268,16 @@
     <Compile Include="Models\AllowablePlacement.cs" />
     <Compile Include="Models\AuthContext.cs" />
     <Compile Include="Models\AuthRepository.cs" />
-    <Compile Include="Models\AvailablePlacementsView.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Enum.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\Placement.cs" />
     <Compile Include="Models\PlacementProvider.cs" />
-    <Compile Include="Models\PlacementProviderView.cs" />
     <Compile Include="Models\PlacementSupervisor.cs" />
     <Compile Include="Models\PlacementType.cs" />
-    <Compile Include="Models\PlacementTypeListView.cs" />
-    <Compile Include="Models\PlacementView.cs" />
-    <Compile Include="Models\PlacementYearsView.cs" />
     <Compile Include="Models\Programme.cs" />
-    <Compile Include="Models\ProgrammeListView.cs" />
     <Compile Include="Models\ProgrammeStage.cs" />
-    <Compile Include="Models\ProgrammeStagesView.cs" />
-    <Compile Include="Models\ProvidersNameListView.cs" />
     <Compile Include="Models\RefreshToken.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\StudentPlacement.cs" />
@@ -383,8 +374,8 @@
     <EmbeddedResource Include="Database\spsMigrations\201501021505107_initial.resx">
       <DependentUpon>201501021505107_initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Database\spsMigrations\201501291221015_AddProgrammeStageYear.resx">
-      <DependentUpon>201501291221015_AddProgrammeStageYear.cs</DependentUpon>
+    <EmbeddedResource Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.resx">
+      <DependentUpon>201502111233111_ChangeProgrammeStageYearToInt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\UserManagementMigrations\201501021456049_initial.resx">
       <DependentUpon>201501021456049_initial.cs</DependentUpon>

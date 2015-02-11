@@ -24,15 +24,15 @@ namespace spsServerAPI.Models
         public virtual DbSet<StudentProgrammeStage> StudentProgrammeStages { get; set; }
         public virtual DbSet<Tutor> Tutors { get; set; }
         public virtual DbSet<TutorVisit> TutorVisits { get; set; }
-        // The following are to be dropped from the Database model
-        public virtual DbSet<AvailablePlacementsView> AvailablePlacementsViews { get; set; }
-        public virtual DbSet<PlacementProviderView> PlacementProviderViews { get; set; }
-        public virtual DbSet<PlacementTypeListView> PlacementTypeListViews { get; set; }
-        public virtual DbSet<PlacementView> PlacementViews { get; set; }
-        public virtual DbSet<PlacementYearsView> PlacementYearsViews { get; set; }
-        public virtual DbSet<ProgrammeListView> ProgrammeListViews { get; set; }
-        public virtual DbSet<ProgrammeStagesView> ProgrammeStagesViews { get; set; }
-        public virtual DbSet<ProvidersNameListView> ProvidersNameListViews { get; set; }
+        //// The following are to be dropped from the Database model
+        //public virtual DbSet<AvailablePlacementsView> AvailablePlacementsViews { get; set; }
+        //public virtual DbSet<PlacementProviderView> PlacementProviderViews { get; set; }
+        //public virtual DbSet<PlacementTypeListView> PlacementTypeListViews { get; set; }
+        //public virtual DbSet<PlacementView> PlacementViews { get; set; }
+        //public virtual DbSet<PlacementYearsView> PlacementYearsViews { get; set; }
+        //public virtual DbSet<ProgrammeListView> ProgrammeListViews { get; set; }
+        //public virtual DbSet<ProgrammeStagesView> ProgrammeStagesViews { get; set; }
+        //public virtual DbSet<ProvidersNameListView> ProvidersNameListViews { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

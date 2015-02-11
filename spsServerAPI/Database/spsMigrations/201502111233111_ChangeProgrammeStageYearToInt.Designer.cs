@@ -7,13 +7,13 @@ namespace spsServerAPI.Database.spsMigrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.1-30610")]
-    public sealed partial class AddProgrammeStageYear : IMigrationMetadata
+    public sealed partial class ChangeProgrammeStageYearToInt : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddProgrammeStageYear));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeProgrammeStageYearToInt));
         
         string IMigrationMetadata.Id
         {
-            get { return "201501291221015_AddProgrammeStageYear"; }
+            get { return "201502111233111_ChangeProgrammeStageYearToInt"; }
         }
         
         string IMigrationMetadata.Source
