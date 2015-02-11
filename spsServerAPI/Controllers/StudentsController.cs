@@ -44,7 +44,7 @@ namespace spsServerAPI.Controllers
 
         // GET: api/Students/5
         [Route("GetStudentByIdForYear/SID/{id}/Year/{year:int}")]
-        public dynamic GetStudent(string id,int year)
+        public dynamic GetStudentByIdForYear(string id, int year)
         {
          var result =  (from s in db.Students
              join sps in db.StudentProgrammeStages
