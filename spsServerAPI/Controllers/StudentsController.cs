@@ -49,11 +49,15 @@ namespace spsServerAPI.Controllers
          var result =  (from s in db.Students
              join sps in db.StudentProgrammeStages
              on s.SID equals sps.SID
+             join ps in db.ProgrammeStages
+             on sps.ProgrammeStageID equals ps.Id
+             join p in db.Programmes
+             on ps.ProgrammeCode equals p.ProgrammeCode
              where sps.SID == id 
              where sps.Year == year
              select new 
              {
-                 s.SID, s.FirstName,s.SecondName,sps.ProgrammeStage
+                 s.SID, s.FirstName,s.SecondName,p.ProgrammeCode,p.ProgrammeName,ps.Stage
              }
             );
             if (result.Count() == 0)

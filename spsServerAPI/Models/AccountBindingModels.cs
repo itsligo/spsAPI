@@ -36,7 +36,24 @@ namespace spsServerAPI.Models
     {
         [Required]
         [Display(Name = "Email")]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        public string Fname { get; set; }
+
+        [Required]
+        [Display(Name = "Second Name")]
+        public string Sname { get; set; }
+
+        [Required]
+        [Display(Name = "memberOf")]
+        public string memberOf { get; set; }
+
+        [Required]
+        [Display(Name = "UserType")]
+        public string UserType { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

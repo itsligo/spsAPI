@@ -30,6 +30,14 @@ namespace spsServerAPI.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
+
+        public ApplicationRoleManager RoleManager
+        {
+            get { return _roleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>(); }
+            set { _roleManager = value; }
+        }
+
         ApplicationDbContext autDb = new ApplicationDbContext();
 
         public AccountController()
@@ -351,18 +359,23 @@ namespace spsServerAPI.Controllers
             var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, Approved = false };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+            
 
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
             }
+            
+            //ApplicationRole role = RoleManager.FindByName("unapproved");
+            ApplicationRole Role = await RoleManager.Roles.SingleAsync(r => r.Name == "unapproved");
+            user.Roles.Add(new ApplicationUserRole() { RoleId = Role.Id, UserId = user.Id });
 
             return Ok();
         }
 
         
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
-        [Authorize(Roles="tutor")]
+        [Authorize(Roles="admin")]
         [Route("GetUnauthorised")]
         public dynamic GetUnauthorised()
         {

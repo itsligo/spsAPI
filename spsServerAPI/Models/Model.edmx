@@ -1,0 +1,965 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Edmx Version="3.0" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <Runtime>
+    <ConceptualModels>
+      <Schema Namespace="spsServerAPI.Models" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AllowablePlacement" customannotation:ClrType="spsServerAPI.Models.AllowablePlacement, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="PlacementID" />
+            <PropertyRef Name="ProgrammeStageID" />
+          </Key>
+          <Property Name="PlacementID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="None" />
+          <Property Name="ProgrammeStageID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="None" />
+          <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Placement" Relationship="Self.Placement_AllowablePlacements" FromRole="Placement_AllowablePlacements_Target" ToRole="Placement_AllowablePlacements_Source" />
+          <NavigationProperty Name="ProgrammeStage" Relationship="Self.ProgrammeStage_AllowablePlacements" FromRole="ProgrammeStage_AllowablePlacements_Target" ToRole="ProgrammeStage_AllowablePlacements_Source" />
+        </EntityType>
+        <EntityType Name="Placement" customannotation:ClrType="spsServerAPI.Models.Placement, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="PlacementID" />
+          </Key>
+          <Property Name="PlacementID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProviderID" Type="Int32" />
+          <Property Name="AddressLine1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AddressLine2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PlacementDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PlacementType" Type="Int32" />
+          <Property Name="WebLink" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StartDate" Type="DateTime" />
+          <Property Name="FinishDate" Type="DateTime" />
+          <Property Name="County" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Country" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Filled" Type="Boolean" />
+          <Property Name="UseBaseAddress" Type="Boolean" />
+          <NavigationProperty Name="AllowablePlacements" Relationship="Self.Placement_AllowablePlacements" FromRole="Placement_AllowablePlacements_Source" ToRole="Placement_AllowablePlacements_Target" />
+          <NavigationProperty Name="PlacementProvider" Relationship="Self.PlacementProvider_Placements" FromRole="PlacementProvider_Placements_Target" ToRole="PlacementProvider_Placements_Source" />
+          <NavigationProperty Name="PlacementTypeRef" Relationship="Self.PlacementType_Placements" FromRole="PlacementType_Placements_Target" ToRole="PlacementType_Placements_Source" />
+          <NavigationProperty Name="StudentPlacements" Relationship="Self.Placement_StudentPlacements" FromRole="Placement_StudentPlacements_Source" ToRole="Placement_StudentPlacements_Target" />
+        </EntityType>
+        <EntityType Name="PlacementProvider" customannotation:ClrType="spsServerAPI.Models.PlacementProvider, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="ProviderID" />
+          </Key>
+          <Property Name="ProviderID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProviderName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AdditionalNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AddressLine1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AddressLine2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="County" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Country" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Placements" Relationship="Self.PlacementProvider_Placements" FromRole="PlacementProvider_Placements_Source" ToRole="PlacementProvider_Placements_Target" />
+          <NavigationProperty Name="PlacementSupervisors" Relationship="Self.PlacementSupervisor_PlacementProvider" FromRole="PlacementSupervisor_PlacementProvider_Target" ToRole="PlacementSupervisor_PlacementProvider_Source" />
+        </EntityType>
+        <EntityType Name="PlacementSupervisor" customannotation:ClrType="spsServerAPI.Models.PlacementSupervisor, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProviderID" Type="Int32" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecondName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Telephone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PlacementProvider" Relationship="Self.PlacementSupervisor_PlacementProvider" FromRole="PlacementSupervisor_PlacementProvider_Source" ToRole="PlacementSupervisor_PlacementProvider_Target" />
+        </EntityType>
+        <EntityType Name="PlacementType" customannotation:ClrType="spsServerAPI.Models.PlacementType, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Placements" Relationship="Self.PlacementType_Placements" FromRole="PlacementType_Placements_Source" ToRole="PlacementType_Placements_Target" />
+        </EntityType>
+        <EntityType Name="StudentPlacement" customannotation:ClrType="spsServerAPI.Models.StudentPlacement, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="SPID" />
+          </Key>
+          <Property Name="SPID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PlacementID" Type="Int32" />
+          <Property Name="Preference" Type="Int32" />
+          <Property Name="Status" Type="Int32" />
+          <Property Name="TutorID" Type="Int32" />
+          <Property Name="SupervisorID" Type="Int32" />
+          <NavigationProperty Name="Placement" Relationship="Self.Placement_StudentPlacements" FromRole="Placement_StudentPlacements_Target" ToRole="Placement_StudentPlacements_Source" />
+          <NavigationProperty Name="Student" Relationship="Self.Student_StudentPlacements" FromRole="Student_StudentPlacements_Target" ToRole="Student_StudentPlacements_Source" />
+          <NavigationProperty Name="Tutor" Relationship="Self.Tutor_StudentPlacements" FromRole="Tutor_StudentPlacements_Target" ToRole="Tutor_StudentPlacements_Source" />
+          <NavigationProperty Name="TutorVisits" Relationship="Self.TutorVisit_StudentPlacement" FromRole="TutorVisit_StudentPlacement_Target" ToRole="TutorVisit_StudentPlacement_Source" />
+        </EntityType>
+        <EntityType Name="Student" customannotation:ClrType="spsServerAPI.Models.Student, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="SID" />
+          </Key>
+          <Property Name="SID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecondName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="StudentPlacements" Relationship="Self.Student_StudentPlacements" FromRole="Student_StudentPlacements_Source" ToRole="Student_StudentPlacements_Target" />
+          <NavigationProperty Name="StudentProgrammeStages" Relationship="Self.Student_StudentProgrammeStages" FromRole="Student_StudentProgrammeStages_Source" ToRole="Student_StudentProgrammeStages_Target" />
+        </EntityType>
+        <EntityType Name="StudentProgrammeStage" customannotation:ClrType="spsServerAPI.Models.StudentProgrammeStage, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="MemberID" />
+          </Key>
+          <Property Name="MemberID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProgrammeStageID" Type="Int32" />
+          <Property Name="Year" Type="Int32" />
+          <NavigationProperty Name="ProgrammeStage" Relationship="Self.ProgrammeStage_StudentProgrammeStages" FromRole="ProgrammeStage_StudentProgrammeStages_Target" ToRole="ProgrammeStage_StudentProgrammeStages_Source" />
+          <NavigationProperty Name="Student" Relationship="Self.Student_StudentProgrammeStages" FromRole="Student_StudentProgrammeStages_Target" ToRole="Student_StudentProgrammeStages_Source" />
+        </EntityType>
+        <EntityType Name="ProgrammeStage" customannotation:ClrType="spsServerAPI.Models.ProgrammeStage, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProgrammeCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Stage" Type="Int32" />
+          <NavigationProperty Name="AllowablePlacements" Relationship="Self.ProgrammeStage_AllowablePlacements" FromRole="ProgrammeStage_AllowablePlacements_Source" ToRole="ProgrammeStage_AllowablePlacements_Target" />
+          <NavigationProperty Name="Programme" Relationship="Self.Programme_ProgrammeStages" FromRole="Programme_ProgrammeStages_Target" ToRole="Programme_ProgrammeStages_Source" />
+          <NavigationProperty Name="StudentProgrammeStages" Relationship="Self.ProgrammeStage_StudentProgrammeStages" FromRole="ProgrammeStage_StudentProgrammeStages_Source" ToRole="ProgrammeStage_StudentProgrammeStages_Target" />
+        </EntityType>
+        <EntityType Name="Programme" customannotation:ClrType="spsServerAPI.Models.Programme, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="ProgrammeCode" />
+          </Key>
+          <Property Name="ProgrammeCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProgrammeName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ProgrammeStages" Relationship="Self.Programme_ProgrammeStages" FromRole="Programme_ProgrammeStages_Source" ToRole="Programme_ProgrammeStages_Target" />
+        </EntityType>
+        <EntityType Name="Tutor" customannotation:ClrType="spsServerAPI.Models.Tutor, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="TutorID" />
+          </Key>
+          <Property Name="TutorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecondName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="StudentPlacements" Relationship="Self.Tutor_StudentPlacements" FromRole="Tutor_StudentPlacements_Source" ToRole="Tutor_StudentPlacements_Target" />
+          <NavigationProperty Name="TutorVisits" Relationship="Self.Tutor_TutorVisits" FromRole="Tutor_TutorVisits_Source" ToRole="Tutor_TutorVisits_Target" />
+        </EntityType>
+        <EntityType Name="TutorVisit" customannotation:ClrType="spsServerAPI.Models.TutorVisit, spsServerAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="VisitID" />
+          </Key>
+          <Property Name="VisitID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TutorID" Type="Int32" />
+          <Property Name="SPID" Type="Int32" />
+          <Property Name="DateVisited" Type="DateTime" />
+          <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="StudentPlacement" Relationship="Self.TutorVisit_StudentPlacement" FromRole="TutorVisit_StudentPlacement_Source" ToRole="TutorVisit_StudentPlacement_Target" />
+          <NavigationProperty Name="Tutor" Relationship="Self.Tutor_TutorVisits" FromRole="Tutor_TutorVisits_Target" ToRole="Tutor_TutorVisits_Source" />
+        </EntityType>
+        <Association Name="Placement_AllowablePlacements">
+          <End Role="Placement_AllowablePlacements_Source" Type="Self.Placement" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Placement_AllowablePlacements_Target" Type="Self.AllowablePlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Placement_AllowablePlacements_Source">
+              <PropertyRef Name="PlacementID" />
+            </Principal>
+            <Dependent Role="Placement_AllowablePlacements_Target">
+              <PropertyRef Name="PlacementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlacementProvider_Placements">
+          <End Role="PlacementProvider_Placements_Source" Type="Self.PlacementProvider" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PlacementProvider_Placements_Target" Type="Self.Placement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PlacementProvider_Placements_Source">
+              <PropertyRef Name="ProviderID" />
+            </Principal>
+            <Dependent Role="PlacementProvider_Placements_Target">
+              <PropertyRef Name="ProviderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlacementSupervisor_PlacementProvider">
+          <End Role="PlacementSupervisor_PlacementProvider_Source" Type="Self.PlacementSupervisor" Multiplicity="*" />
+          <End Role="PlacementSupervisor_PlacementProvider_Target" Type="Self.PlacementProvider" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="PlacementSupervisor_PlacementProvider_Target">
+              <PropertyRef Name="ProviderID" />
+            </Principal>
+            <Dependent Role="PlacementSupervisor_PlacementProvider_Source">
+              <PropertyRef Name="ProviderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlacementType_Placements">
+          <End Role="PlacementType_Placements_Source" Type="Self.PlacementType" Multiplicity="0..1" />
+          <End Role="PlacementType_Placements_Target" Type="Self.Placement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PlacementType_Placements_Source">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PlacementType_Placements_Target">
+              <PropertyRef Name="PlacementType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Student_StudentPlacements">
+          <End Role="Student_StudentPlacements_Source" Type="Self.Student" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Student_StudentPlacements_Target" Type="Self.StudentPlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student_StudentPlacements_Source">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="Student_StudentPlacements_Target">
+              <PropertyRef Name="SID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ProgrammeStage_AllowablePlacements">
+          <End Role="ProgrammeStage_AllowablePlacements_Source" Type="Self.ProgrammeStage" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ProgrammeStage_AllowablePlacements_Target" Type="Self.AllowablePlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProgrammeStage_AllowablePlacements_Source">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProgrammeStage_AllowablePlacements_Target">
+              <PropertyRef Name="ProgrammeStageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Programme_ProgrammeStages">
+          <End Role="Programme_ProgrammeStages_Source" Type="Self.Programme" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Programme_ProgrammeStages_Target" Type="Self.ProgrammeStage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Programme_ProgrammeStages_Source">
+              <PropertyRef Name="ProgrammeCode" />
+            </Principal>
+            <Dependent Role="Programme_ProgrammeStages_Target">
+              <PropertyRef Name="ProgrammeCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ProgrammeStage_StudentProgrammeStages">
+          <End Role="ProgrammeStage_StudentProgrammeStages_Source" Type="Self.ProgrammeStage" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ProgrammeStage_StudentProgrammeStages_Target" Type="Self.StudentProgrammeStage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProgrammeStage_StudentProgrammeStages_Source">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProgrammeStage_StudentProgrammeStages_Target">
+              <PropertyRef Name="ProgrammeStageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Student_StudentProgrammeStages">
+          <End Role="Student_StudentProgrammeStages_Source" Type="Self.Student" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Student_StudentProgrammeStages_Target" Type="Self.StudentProgrammeStage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student_StudentProgrammeStages_Source">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="Student_StudentProgrammeStages_Target">
+              <PropertyRef Name="SID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Tutor_StudentPlacements">
+          <End Role="Tutor_StudentPlacements_Source" Type="Self.Tutor" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Tutor_StudentPlacements_Target" Type="Self.StudentPlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tutor_StudentPlacements_Source">
+              <PropertyRef Name="TutorID" />
+            </Principal>
+            <Dependent Role="Tutor_StudentPlacements_Target">
+              <PropertyRef Name="TutorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="TutorVisit_StudentPlacement">
+          <End Role="TutorVisit_StudentPlacement_Source" Type="Self.TutorVisit" Multiplicity="*" />
+          <End Role="TutorVisit_StudentPlacement_Target" Type="Self.StudentPlacement" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="TutorVisit_StudentPlacement_Target">
+              <PropertyRef Name="SPID" />
+            </Principal>
+            <Dependent Role="TutorVisit_StudentPlacement_Source">
+              <PropertyRef Name="SPID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Tutor_TutorVisits">
+          <End Role="Tutor_TutorVisits_Source" Type="Self.Tutor" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Tutor_TutorVisits_Target" Type="Self.TutorVisit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tutor_TutorVisits_Source">
+              <PropertyRef Name="TutorID" />
+            </Principal>
+            <Dependent Role="Tutor_TutorVisits_Target">
+              <PropertyRef Name="TutorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Placement_StudentPlacements">
+          <End Role="Placement_StudentPlacements_Source" Type="Self.Placement" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Placement_StudentPlacements_Target" Type="Self.StudentPlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Placement_StudentPlacements_Source">
+              <PropertyRef Name="PlacementID" />
+            </Principal>
+            <Dependent Role="Placement_StudentPlacements_Target">
+              <PropertyRef Name="PlacementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Model" customannotation:UseClrTypes="true">
+          <EntitySet Name="AllowablePlacements" EntityType="Self.AllowablePlacement" />
+          <EntitySet Name="Placements" EntityType="Self.Placement" />
+          <EntitySet Name="PlacementProviders" EntityType="Self.PlacementProvider" />
+          <EntitySet Name="PlacementSupervisors" EntityType="Self.PlacementSupervisor" />
+          <EntitySet Name="PlacementTypes" EntityType="Self.PlacementType" />
+          <EntitySet Name="StudentPlacements" EntityType="Self.StudentPlacement" />
+          <EntitySet Name="Students" EntityType="Self.Student" />
+          <EntitySet Name="StudentProgrammeStages" EntityType="Self.StudentProgrammeStage" />
+          <EntitySet Name="ProgrammeStages" EntityType="Self.ProgrammeStage" />
+          <EntitySet Name="Programmes" EntityType="Self.Programme" />
+          <EntitySet Name="Tutors" EntityType="Self.Tutor" />
+          <EntitySet Name="TutorVisits" EntityType="Self.TutorVisit" />
+          <AssociationSet Name="Placement_AllowablePlacements" Association="Self.Placement_AllowablePlacements">
+            <End Role="Placement_AllowablePlacements_Source" EntitySet="Placements" />
+            <End Role="Placement_AllowablePlacements_Target" EntitySet="AllowablePlacements" />
+          </AssociationSet>
+          <AssociationSet Name="PlacementProvider_Placements" Association="Self.PlacementProvider_Placements">
+            <End Role="PlacementProvider_Placements_Source" EntitySet="PlacementProviders" />
+            <End Role="PlacementProvider_Placements_Target" EntitySet="Placements" />
+          </AssociationSet>
+          <AssociationSet Name="PlacementSupervisor_PlacementProvider" Association="Self.PlacementSupervisor_PlacementProvider">
+            <End Role="PlacementSupervisor_PlacementProvider_Source" EntitySet="PlacementSupervisors" />
+            <End Role="PlacementSupervisor_PlacementProvider_Target" EntitySet="PlacementProviders" />
+          </AssociationSet>
+          <AssociationSet Name="PlacementType_Placements" Association="Self.PlacementType_Placements">
+            <End Role="PlacementType_Placements_Source" EntitySet="PlacementTypes" />
+            <End Role="PlacementType_Placements_Target" EntitySet="Placements" />
+          </AssociationSet>
+          <AssociationSet Name="Student_StudentPlacements" Association="Self.Student_StudentPlacements">
+            <End Role="Student_StudentPlacements_Source" EntitySet="Students" />
+            <End Role="Student_StudentPlacements_Target" EntitySet="StudentPlacements" />
+          </AssociationSet>
+          <AssociationSet Name="ProgrammeStage_AllowablePlacements" Association="Self.ProgrammeStage_AllowablePlacements">
+            <End Role="ProgrammeStage_AllowablePlacements_Source" EntitySet="ProgrammeStages" />
+            <End Role="ProgrammeStage_AllowablePlacements_Target" EntitySet="AllowablePlacements" />
+          </AssociationSet>
+          <AssociationSet Name="Programme_ProgrammeStages" Association="Self.Programme_ProgrammeStages">
+            <End Role="Programme_ProgrammeStages_Source" EntitySet="Programmes" />
+            <End Role="Programme_ProgrammeStages_Target" EntitySet="ProgrammeStages" />
+          </AssociationSet>
+          <AssociationSet Name="ProgrammeStage_StudentProgrammeStages" Association="Self.ProgrammeStage_StudentProgrammeStages">
+            <End Role="ProgrammeStage_StudentProgrammeStages_Source" EntitySet="ProgrammeStages" />
+            <End Role="ProgrammeStage_StudentProgrammeStages_Target" EntitySet="StudentProgrammeStages" />
+          </AssociationSet>
+          <AssociationSet Name="Student_StudentProgrammeStages" Association="Self.Student_StudentProgrammeStages">
+            <End Role="Student_StudentProgrammeStages_Source" EntitySet="Students" />
+            <End Role="Student_StudentProgrammeStages_Target" EntitySet="StudentProgrammeStages" />
+          </AssociationSet>
+          <AssociationSet Name="Tutor_StudentPlacements" Association="Self.Tutor_StudentPlacements">
+            <End Role="Tutor_StudentPlacements_Source" EntitySet="Tutors" />
+            <End Role="Tutor_StudentPlacements_Target" EntitySet="StudentPlacements" />
+          </AssociationSet>
+          <AssociationSet Name="TutorVisit_StudentPlacement" Association="Self.TutorVisit_StudentPlacement">
+            <End Role="TutorVisit_StudentPlacement_Source" EntitySet="TutorVisits" />
+            <End Role="TutorVisit_StudentPlacement_Target" EntitySet="StudentPlacements" />
+          </AssociationSet>
+          <AssociationSet Name="Tutor_TutorVisits" Association="Self.Tutor_TutorVisits">
+            <End Role="Tutor_TutorVisits_Source" EntitySet="Tutors" />
+            <End Role="Tutor_TutorVisits_Target" EntitySet="TutorVisits" />
+          </AssociationSet>
+          <AssociationSet Name="Placement_StudentPlacements" Association="Self.Placement_StudentPlacements">
+            <End Role="Placement_StudentPlacements_Source" EntitySet="Placements" />
+            <End Role="Placement_StudentPlacements_Target" EntitySet="StudentPlacements" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </ConceptualModels>
+    <Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CodeFirstDatabase" CdmEntityContainer="Model">
+          <EntitySetMapping Name="AllowablePlacements">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.AllowablePlacement">
+              <MappingFragment StoreEntitySet="AllowablePlacement">
+                <ScalarProperty Name="PlacementID" ColumnName="PlacementID" />
+                <ScalarProperty Name="ProgrammeStageID" ColumnName="ProgrammeStageID" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Placements">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.Placement">
+              <MappingFragment StoreEntitySet="Placement">
+                <ScalarProperty Name="PlacementID" ColumnName="PlacementID" />
+                <ScalarProperty Name="ProviderID" ColumnName="ProviderID" />
+                <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
+                <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="PlacementDescription" ColumnName="PlacementDescription" />
+                <ScalarProperty Name="PlacementType" ColumnName="PlacementType" />
+                <ScalarProperty Name="WebLink" ColumnName="WebLink" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="FinishDate" ColumnName="FinishDate" />
+                <ScalarProperty Name="County" ColumnName="County" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="Filled" ColumnName="Filled" />
+                <ScalarProperty Name="UseBaseAddress" ColumnName="UseBaseAddress" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PlacementProviders">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.PlacementProvider">
+              <MappingFragment StoreEntitySet="PlacementProvider">
+                <ScalarProperty Name="ProviderID" ColumnName="ProviderID" />
+                <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="ProviderDescription" ColumnName="ProviderDescription" />
+                <ScalarProperty Name="AdditionalNotes" ColumnName="AdditionalNotes" />
+                <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
+                <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="County" ColumnName="County" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PlacementSupervisors">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.PlacementSupervisor">
+              <MappingFragment StoreEntitySet="PlacementSupervisor">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProviderID" ColumnName="ProviderID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="SecondName" ColumnName="SecondName" />
+                <ScalarProperty Name="Telephone" ColumnName="Telephone" />
+                <ScalarProperty Name="email" ColumnName="email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PlacementTypes">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.PlacementType">
+              <MappingFragment StoreEntitySet="PlacementType">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentPlacements">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.StudentPlacement">
+              <MappingFragment StoreEntitySet="StudentPlacement">
+                <ScalarProperty Name="SPID" ColumnName="SPID" />
+                <ScalarProperty Name="SID" ColumnName="SID" />
+                <ScalarProperty Name="PlacementID" ColumnName="PlacementID" />
+                <ScalarProperty Name="Preference" ColumnName="Preference" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="TutorID" ColumnName="TutorID" />
+                <ScalarProperty Name="SupervisorID" ColumnName="SupervisorID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Students">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.Student">
+              <MappingFragment StoreEntitySet="Student">
+                <ScalarProperty Name="SID" ColumnName="SID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="SecondName" ColumnName="SecondName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentProgrammeStages">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.StudentProgrammeStage">
+              <MappingFragment StoreEntitySet="StudentProgrammeStage">
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+                <ScalarProperty Name="SID" ColumnName="SID" />
+                <ScalarProperty Name="ProgrammeStageID" ColumnName="ProgrammeStageID" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProgrammeStages">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.ProgrammeStage">
+              <MappingFragment StoreEntitySet="ProgrammeStage">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProgrammeCode" ColumnName="ProgrammeCode" />
+                <ScalarProperty Name="Stage" ColumnName="Stage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Programmes">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.Programme">
+              <MappingFragment StoreEntitySet="Programme">
+                <ScalarProperty Name="ProgrammeCode" ColumnName="ProgrammeCode" />
+                <ScalarProperty Name="ProgrammeName" ColumnName="ProgrammeName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tutors">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.Tutor">
+              <MappingFragment StoreEntitySet="Tutor">
+                <ScalarProperty Name="TutorID" ColumnName="TutorID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="SecondName" ColumnName="SecondName" />
+                <ScalarProperty Name="ContactNumber1" ColumnName="ContactNumber1" />
+                <ScalarProperty Name="ContactNumber2" ColumnName="ContactNumber2" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TutorVisits">
+            <EntityTypeMapping TypeName="spsServerAPI.Models.TutorVisit">
+              <MappingFragment StoreEntitySet="TutorVisit">
+                <ScalarProperty Name="VisitID" ColumnName="VisitID" />
+                <ScalarProperty Name="TutorID" ColumnName="TutorID" />
+                <ScalarProperty Name="SPID" ColumnName="SPID" />
+                <ScalarProperty Name="DateVisited" ColumnName="DateVisited" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </Mappings>
+    <StorageModels>
+      <Schema Namespace="CodeFirstDatabaseSchema" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AllowablePlacement">
+          <Key>
+            <PropertyRef Name="PlacementID" />
+            <PropertyRef Name="ProgrammeStageID" />
+          </Key>
+          <Property Name="PlacementID" Type="int" customannotation:Index="{ Name: IX_PlacementID, Order: 0 }" Nullable="false" />
+          <Property Name="ProgrammeStageID" Type="int" customannotation:Index="{ Name: IX_ProgrammeStageID, Order: 0 }" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
+        <EntityType Name="Placement">
+          <Key>
+            <PropertyRef Name="PlacementID" />
+          </Key>
+          <Property Name="PlacementID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderID" Type="int" customannotation:Index="{ Name: IX_ProviderID, Order: 0 }" Nullable="true" />
+          <Property Name="AddressLine1" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="AddressLine2" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="City" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="PlacementDescription" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="PlacementType" Type="int" customannotation:Index="{ Name: IX_PlacementType, Order: 0 }" Nullable="true" />
+          <Property Name="WebLink" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="StartDate" Type="date" Nullable="true" />
+          <Property Name="FinishDate" Type="date" Nullable="true" />
+          <Property Name="County" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Country" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Filled" Type="bit" Nullable="true" />
+          <Property Name="UseBaseAddress" Type="bit" Nullable="true" />
+        </EntityType>
+        <EntityType Name="PlacementProvider">
+          <Key>
+            <PropertyRef Name="ProviderID" />
+          </Key>
+          <Property Name="ProviderID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="ContactNumber" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="ProviderDescription" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="AdditionalNotes" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="AddressLine1" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="AddressLine2" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="City" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="County" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Country" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
+        <EntityType Name="PlacementSupervisor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderID" Type="int" customannotation:Index="{ Name: IX_ProviderID, Order: 0 }" Nullable="true" />
+          <Property Name="FirstName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="SecondName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Telephone" Type="nvarchar" MaxLength="50" Nullable="true" />
+          <Property Name="email" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
+        <EntityType Name="PlacementType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
+        <EntityType Name="StudentPlacement">
+          <Key>
+            <PropertyRef Name="SPID" />
+          </Key>
+          <Property Name="SPID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SID" Type="nvarchar" customannotation:Index="{ Name: IX_SID, Order: 0 }" MaxLength="50" Nullable="true" />
+          <Property Name="PlacementID" Type="int" customannotation:Index="{ Name: IX_PlacementID, Order: 0 }" Nullable="true" />
+          <Property Name="Preference" Type="int" Nullable="true" />
+          <Property Name="Status" Type="int" Nullable="true" />
+          <Property Name="TutorID" Type="int" customannotation:Index="{ Name: IX_TutorID, Order: 0 }" Nullable="true" />
+          <Property Name="SupervisorID" Type="int" Nullable="true" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="SID" />
+          </Key>
+          <Property Name="SID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="SecondName" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
+        <EntityType Name="StudentProgrammeStage">
+          <Key>
+            <PropertyRef Name="MemberID" />
+          </Key>
+          <Property Name="MemberID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SID" Type="nvarchar" customannotation:Index="{ Name: IX_SID, Order: 0 }" MaxLength="50" Nullable="true" />
+          <Property Name="ProgrammeStageID" Type="int" customannotation:Index="{ Name: IX_ProgrammeStageID, Order: 0 }" Nullable="true" />
+          <Property Name="Year" Type="int" Nullable="true" />
+        </EntityType>
+        <EntityType Name="ProgrammeStage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProgrammeCode" Type="nvarchar" customannotation:Index="{ Name: IX_ProgrammeCode, Order: 0 }" MaxLength="50" Nullable="true" />
+          <Property Name="Stage" Type="int" Nullable="true" />
+        </EntityType>
+        <EntityType Name="Programme">
+          <Key>
+            <PropertyRef Name="ProgrammeCode" />
+          </Key>
+          <Property Name="ProgrammeCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ProgrammeName" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
+        <EntityType Name="Tutor">
+          <Key>
+            <PropertyRef Name="TutorID" />
+          </Key>
+          <Property Name="TutorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="SecondName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="ContactNumber1" Type="nvarchar" MaxLength="50" Nullable="true" />
+          <Property Name="ContactNumber2" Type="nvarchar" MaxLength="50" Nullable="true" />
+        </EntityType>
+        <EntityType Name="TutorVisit">
+          <Key>
+            <PropertyRef Name="VisitID" />
+          </Key>
+          <Property Name="VisitID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TutorID" Type="int" customannotation:Index="{ Name: IX_TutorID, Order: 0 }" Nullable="true" />
+          <Property Name="SPID" Type="int" customannotation:Index="{ Name: IX_SPID, Order: 0 }" Nullable="true" />
+          <Property Name="DateVisited" Type="date" Nullable="true" />
+          <Property Name="Comment" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
+        <Association Name="Placement_AllowablePlacements">
+          <End Role="Placement" Type="Self.Placement" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AllowablePlacement" Type="Self.AllowablePlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Placement">
+              <PropertyRef Name="PlacementID" />
+            </Principal>
+            <Dependent Role="AllowablePlacement">
+              <PropertyRef Name="PlacementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlacementProvider_Placements">
+          <End Role="PlacementProvider" Type="Self.PlacementProvider" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Placement" Type="Self.Placement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PlacementProvider">
+              <PropertyRef Name="ProviderID" />
+            </Principal>
+            <Dependent Role="Placement">
+              <PropertyRef Name="ProviderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlacementSupervisor_PlacementProvider">
+          <End Role="PlacementProvider" Type="Self.PlacementProvider" Multiplicity="0..1" />
+          <End Role="PlacementSupervisor" Type="Self.PlacementSupervisor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PlacementProvider">
+              <PropertyRef Name="ProviderID" />
+            </Principal>
+            <Dependent Role="PlacementSupervisor">
+              <PropertyRef Name="ProviderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlacementType_Placements">
+          <End Role="PlacementType" Type="Self.PlacementType" Multiplicity="0..1" />
+          <End Role="Placement" Type="Self.Placement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PlacementType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Placement">
+              <PropertyRef Name="PlacementType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Student_StudentPlacements">
+          <End Role="Student" Type="Self.Student" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StudentPlacement" Type="Self.StudentPlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="StudentPlacement">
+              <PropertyRef Name="SID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ProgrammeStage_AllowablePlacements">
+          <End Role="ProgrammeStage" Type="Self.ProgrammeStage" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AllowablePlacement" Type="Self.AllowablePlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProgrammeStage">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AllowablePlacement">
+              <PropertyRef Name="ProgrammeStageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Programme_ProgrammeStages">
+          <End Role="Programme" Type="Self.Programme" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ProgrammeStage" Type="Self.ProgrammeStage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Programme">
+              <PropertyRef Name="ProgrammeCode" />
+            </Principal>
+            <Dependent Role="ProgrammeStage">
+              <PropertyRef Name="ProgrammeCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ProgrammeStage_StudentProgrammeStages">
+          <End Role="ProgrammeStage" Type="Self.ProgrammeStage" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StudentProgrammeStage" Type="Self.StudentProgrammeStage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProgrammeStage">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="StudentProgrammeStage">
+              <PropertyRef Name="ProgrammeStageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Student_StudentProgrammeStages">
+          <End Role="Student" Type="Self.Student" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StudentProgrammeStage" Type="Self.StudentProgrammeStage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="StudentProgrammeStage">
+              <PropertyRef Name="SID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Tutor_StudentPlacements">
+          <End Role="Tutor" Type="Self.Tutor" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StudentPlacement" Type="Self.StudentPlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tutor">
+              <PropertyRef Name="TutorID" />
+            </Principal>
+            <Dependent Role="StudentPlacement">
+              <PropertyRef Name="TutorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="TutorVisit_StudentPlacement">
+          <End Role="StudentPlacement" Type="Self.StudentPlacement" Multiplicity="0..1" />
+          <End Role="TutorVisit" Type="Self.TutorVisit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentPlacement">
+              <PropertyRef Name="SPID" />
+            </Principal>
+            <Dependent Role="TutorVisit">
+              <PropertyRef Name="SPID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Tutor_TutorVisits">
+          <End Role="Tutor" Type="Self.Tutor" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TutorVisit" Type="Self.TutorVisit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tutor">
+              <PropertyRef Name="TutorID" />
+            </Principal>
+            <Dependent Role="TutorVisit">
+              <PropertyRef Name="TutorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Placement_StudentPlacements">
+          <End Role="Placement" Type="Self.Placement" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StudentPlacement" Type="Self.StudentPlacement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Placement">
+              <PropertyRef Name="PlacementID" />
+            </Principal>
+            <Dependent Role="StudentPlacement">
+              <PropertyRef Name="PlacementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CodeFirstDatabase">
+          <EntitySet Name="AllowablePlacement" EntityType="Self.AllowablePlacement" Schema="dbo" Table="AllowablePlacement" />
+          <EntitySet Name="Placement" EntityType="Self.Placement" Schema="dbo" Table="Placement" />
+          <EntitySet Name="PlacementProvider" EntityType="Self.PlacementProvider" Schema="dbo" Table="PlacementProvider" />
+          <EntitySet Name="PlacementSupervisor" EntityType="Self.PlacementSupervisor" Schema="dbo" Table="PlacementSupervisor" />
+          <EntitySet Name="PlacementType" EntityType="Self.PlacementType" Schema="dbo" Table="PlacementType" />
+          <EntitySet Name="StudentPlacement" EntityType="Self.StudentPlacement" Schema="dbo" Table="StudentPlacement" />
+          <EntitySet Name="Student" EntityType="Self.Student" Schema="dbo" Table="Student" />
+          <EntitySet Name="StudentProgrammeStage" EntityType="Self.StudentProgrammeStage" Schema="dbo" Table="StudentProgrammeStage" />
+          <EntitySet Name="ProgrammeStage" EntityType="Self.ProgrammeStage" Schema="dbo" Table="ProgrammeStage" />
+          <EntitySet Name="Programme" EntityType="Self.Programme" Schema="dbo" Table="Programme" />
+          <EntitySet Name="Tutor" EntityType="Self.Tutor" Schema="dbo" Table="Tutor" />
+          <EntitySet Name="TutorVisit" EntityType="Self.TutorVisit" Schema="dbo" Table="TutorVisits" />
+          <AssociationSet Name="Placement_AllowablePlacements" Association="Self.Placement_AllowablePlacements">
+            <End Role="Placement" EntitySet="Placement" />
+            <End Role="AllowablePlacement" EntitySet="AllowablePlacement" />
+          </AssociationSet>
+          <AssociationSet Name="PlacementProvider_Placements" Association="Self.PlacementProvider_Placements">
+            <End Role="PlacementProvider" EntitySet="PlacementProvider" />
+            <End Role="Placement" EntitySet="Placement" />
+          </AssociationSet>
+          <AssociationSet Name="PlacementSupervisor_PlacementProvider" Association="Self.PlacementSupervisor_PlacementProvider">
+            <End Role="PlacementProvider" EntitySet="PlacementProvider" />
+            <End Role="PlacementSupervisor" EntitySet="PlacementSupervisor" />
+          </AssociationSet>
+          <AssociationSet Name="PlacementType_Placements" Association="Self.PlacementType_Placements">
+            <End Role="PlacementType" EntitySet="PlacementType" />
+            <End Role="Placement" EntitySet="Placement" />
+          </AssociationSet>
+          <AssociationSet Name="Student_StudentPlacements" Association="Self.Student_StudentPlacements">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="StudentPlacement" EntitySet="StudentPlacement" />
+          </AssociationSet>
+          <AssociationSet Name="ProgrammeStage_AllowablePlacements" Association="Self.ProgrammeStage_AllowablePlacements">
+            <End Role="ProgrammeStage" EntitySet="ProgrammeStage" />
+            <End Role="AllowablePlacement" EntitySet="AllowablePlacement" />
+          </AssociationSet>
+          <AssociationSet Name="Programme_ProgrammeStages" Association="Self.Programme_ProgrammeStages">
+            <End Role="Programme" EntitySet="Programme" />
+            <End Role="ProgrammeStage" EntitySet="ProgrammeStage" />
+          </AssociationSet>
+          <AssociationSet Name="ProgrammeStage_StudentProgrammeStages" Association="Self.ProgrammeStage_StudentProgrammeStages">
+            <End Role="ProgrammeStage" EntitySet="ProgrammeStage" />
+            <End Role="StudentProgrammeStage" EntitySet="StudentProgrammeStage" />
+          </AssociationSet>
+          <AssociationSet Name="Student_StudentProgrammeStages" Association="Self.Student_StudentProgrammeStages">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="StudentProgrammeStage" EntitySet="StudentProgrammeStage" />
+          </AssociationSet>
+          <AssociationSet Name="Tutor_StudentPlacements" Association="Self.Tutor_StudentPlacements">
+            <End Role="Tutor" EntitySet="Tutor" />
+            <End Role="StudentPlacement" EntitySet="StudentPlacement" />
+          </AssociationSet>
+          <AssociationSet Name="TutorVisit_StudentPlacement" Association="Self.TutorVisit_StudentPlacement">
+            <End Role="StudentPlacement" EntitySet="StudentPlacement" />
+            <End Role="TutorVisit" EntitySet="TutorVisit" />
+          </AssociationSet>
+          <AssociationSet Name="Tutor_TutorVisits" Association="Self.Tutor_TutorVisits">
+            <End Role="Tutor" EntitySet="Tutor" />
+            <End Role="TutorVisit" EntitySet="TutorVisit" />
+          </AssociationSet>
+          <AssociationSet Name="Placement_StudentPlacements" Association="Self.Placement_StudentPlacements">
+            <End Role="Placement" EntitySet="Placement" />
+            <End Role="StudentPlacement" EntitySet="StudentPlacement" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </StorageModels>
+  </Runtime>
+  <Designer>
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="ProcessDependentTemplatesOnSave" Value="False" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <Diagrams >
+      <Diagram DiagramId="79689d767c37438c888d08b35b7b6bc8" Name="Diagram1" ZoomLevel="100">
+        <EntityTypeShape EntityType="spsServerAPI.Models.AllowablePlacement" Width="1.5" PointX="18.625" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Placement" Width="1.5" PointX="11" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementProvider" Width="1.5" PointX="6.5" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementSupervisor" Width="1.5" PointX="0.5" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementType" Width="1.5" PointX="13.5" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.StudentPlacement" Width="1.5" PointX="7.125" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Student" Width="1.5" PointX="0.75" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.StudentProgrammeStage" Width="1.5" PointX="2.25" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.ProgrammeStage" Width="1.5" PointX="8" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Programme" Width="1.5" PointX="12.125" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Tutor" Width="1.5" PointX="4.125" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.TutorVisit" Width="1.5" PointX="7" PointY="7.5" IsExpanded="true" />
+        <AssociationConnector Association="spsServerAPI.Models.Placement_AllowablePlacements" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.PlacementProvider_Placements" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.PlacementSupervisor_PlacementProvider" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.PlacementType_Placements" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.Student_StudentPlacements" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.ProgrammeStage_AllowablePlacements" ManuallyRouted="true" >
+          <ConnectorPoint PointX="9.5" PointY="2.5403857421874996" />
+          <ConnectorPoint PointX="12.75875" PointY="2.5403857421874996" />
+          <ConnectorPoint PointX="12.75875" PointY="3.6839043692453362" />
+          <ConnectorPoint PointX="19.375" PointY="3.6839043692453362" />
+          <ConnectorPoint PointX="19.375" PointY="7.125" />
+        </AssociationConnector>
+        <AssociationConnector Association="spsServerAPI.Models.Programme_ProgrammeStages" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.ProgrammeStage_StudentProgrammeStages" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.Student_StudentProgrammeStages" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.Tutor_StudentPlacements" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.TutorVisit_StudentPlacement" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.Tutor_TutorVisits" ManuallyRouted="false" />
+        <AssociationConnector Association="spsServerAPI.Models.Placement_StudentPlacements" ManuallyRouted="false" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</Edmx>
