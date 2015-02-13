@@ -46,20 +46,82 @@ namespace spsServerAPI.Controllers
         [Route("GetStudentByIdForYear/SID/{id}/Year/{year:int}")]
         public dynamic GetStudentByIdForYear(string id, int year)
         {
-         var result =  (from s in db.Students
-             join sps in db.StudentProgrammeStages
-             on s.SID equals sps.SID
-             join ps in db.ProgrammeStages
-             on sps.ProgrammeStageID equals ps.Id
-             join p in db.Programmes
-             on ps.ProgrammeCode equals p.ProgrammeCode
-             where sps.SID == id 
-             where sps.Year == year
-             select new 
-             {
-                 s.SID, s.FirstName,s.SecondName,p.ProgrammeCode,p.ProgrammeName,ps.Stage
-             }
-            );
+
+            var result = (from s in db.Students
+                          where s.SID == id
+                          select new
+                          {
+                              s.SID,
+                              s.FirstName,
+                              s.SecondName,
+                              StudentDetails =
+                              (from sps in db.StudentProgrammeStages
+                               join ps in db.ProgrammeStages
+                               on sps.ProgrammeStageID equals ps.Id
+                               join p in db.Programmes
+                               on ps.ProgrammeCode equals p.ProgrammeCode
+                               where sps.SID == id
+                               where sps.Year == year
+                               select new
+                               {
+                                   studentProgrammeStage = new
+                                   {
+                                       sps.MemberID,
+                                       sps.Year,
+                                       programmeStage =
+                                           new
+                                           {
+                                               p.ProgrammeName,
+                                               ps.Stage
+                                           }
+                                   }
+                               }),
+                          }
+               );
+
+        
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+            
+            return Ok(result);
+        }
+
+        [Route("GetStudentProgrammeStages/SID/{id}")]
+        public dynamic GetStudentProgrammeStages(string id)
+        {
+
+            var result = (from s in db.Students
+                          where s.SID == id
+                          select new
+                          {
+                              s.SID,
+                              s.FirstName,
+                              s.SecondName,
+                              StudentDetails =
+                              (from sps in db.StudentProgrammeStages
+                               join ps in db.ProgrammeStages
+                               on sps.ProgrammeStageID equals ps.Id
+                               join p in db.Programmes
+                               on ps.ProgrammeCode equals p.ProgrammeCode
+                               where sps.SID == id
+                               select new
+                               {
+                                   studentProgrammeStage = new
+                                   {
+                                       sps.MemberID,
+                                       sps.Year,
+                                       programmeStage =
+                                           new { 
+                                               p.ProgrammeName, ps.Stage 
+                                           }
+                                   }
+                               }),
+                          }
+               );
+
+
             if (result.Count() == 0)
             {
                 return NotFound();
@@ -67,7 +129,6 @@ namespace spsServerAPI.Controllers
 
             return Ok(result);
         }
-
 
         [Route("GetStudentYearsList")]
         public dynamic GetStudentYearsList()
@@ -110,6 +171,7 @@ namespace spsServerAPI.Controllers
             var StudentsforYear = (from s in db.Students
                                    join sps in db.StudentProgrammeStages
                                    on s.SID equals sps.SID
+                                   where sps.Year == year
                                    select new
                                    {
                                        s.SID,

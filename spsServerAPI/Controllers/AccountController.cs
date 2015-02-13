@@ -34,7 +34,8 @@ namespace spsServerAPI.Controllers
 
         public ApplicationRoleManager RoleManager
         {
-            get { return _roleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>(); }
+            //get { return _roleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>(); }
+            
             set { _roleManager = value; }
         }
 
@@ -358,6 +359,7 @@ namespace spsServerAPI.Controllers
 
             var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, Approved = false };
 
+            autDb.Users.Add(user);
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
             
 
@@ -365,9 +367,9 @@ namespace spsServerAPI.Controllers
             {
                 return GetErrorResult(result);
             }
-            
+            var Role = await autDb.Roles.FirstAsync( r => r.Name == "unathorised");
             //ApplicationRole role = RoleManager.FindByName("unapproved");
-            ApplicationRole Role = await RoleManager.Roles.SingleAsync(r => r.Name == "unapproved");
+            //ApplicationRole Role = await RoleManager.Roles.SingleAsync(r => r.Name == "unapproved");
             user.Roles.Add(new ApplicationUserRole() { RoleId = Role.Id, UserId = user.Id });
 
             return Ok();
