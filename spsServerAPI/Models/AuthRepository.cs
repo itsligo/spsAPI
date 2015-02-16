@@ -17,12 +17,14 @@ namespace spsServerAPI.Models
         
         private ApplicationUserManager _appUserManager;
         ApplicationDbContext autDb = new ApplicationDbContext();
+        AuthContext _ctx;
+        private UserManager<IdentityUser> _userManager;
 
 
         public AuthRepository()
         {
-            //_ctx = new AuthContext();
-            //_userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_ctx));
+            _ctx = new AuthContext();
+            _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_ctx));
             _appUserManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
         }
 

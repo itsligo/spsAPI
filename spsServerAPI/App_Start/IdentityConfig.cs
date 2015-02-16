@@ -26,6 +26,7 @@ namespace spsServerAPI
             IdentityFactoryOptions<ApplicationUserManager> options,
             IOwinContext context)
         {
+            var _ctx = context.Get<ApplicationDbContext>();
             var manager = new ApplicationUserManager(
                 new UserStore<ApplicationUser, ApplicationRole, string,
                     ApplicationUserLogin, ApplicationUserRole,

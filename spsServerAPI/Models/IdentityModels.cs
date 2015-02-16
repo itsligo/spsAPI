@@ -51,6 +51,7 @@ namespace spsServerAPI.Models
 
     // Must be expressed in terms of our custom UserRole:
     public class ApplicationRole : IdentityRole<string, ApplicationUserRole>
+    //public class ApplicationRole : IdentityRole
     {
         public ApplicationRole()
         {
@@ -63,26 +64,32 @@ namespace spsServerAPI.Models
             this.Name = name;
         }
 
+
         public string Description { get; set; }
     }
 
 
     // Must be expressed in terms of our custom types:
-    public class ApplicationDbContext
+    public class ApplicationDbContext 
+        //: IdentityDbContext<ApplicationUser>
         : IdentityDbContext<ApplicationUser, ApplicationRole,
-        string, ApplicationUserLogin, ApplicationUserRole, ApplicationUserClaim>
+         string, ApplicationUserLogin, ApplicationUserRole, ApplicationUserClaim>
     {
-        public ApplicationDbContext()
+         public ApplicationDbContext()
             : base("spsModel")
         {
         }
         public DbSet<Client> Clients { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        //public DbSet<ApplicationRole> ApplicationRoles { get; set; }
+        //public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        //public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; }
 
-        static ApplicationDbContext()
-        {
-            //System.Data.Entity.Database.SetInitializer<ApplicationDbContext>(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Configuration>());
-        }
+        //static ApplicationDbContext()
+        //{
+        //    //System.Data.Entity.Database.SetInitializer<ApplicationDbContext>(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Configuration>());
+        //    return this;
+        //}
 
         public static ApplicationDbContext Create()
         {
@@ -90,11 +97,13 @@ namespace spsServerAPI.Models
         }
 
         // Add additional items here as needed
+        
     }
 
     // Most likely won't need to customize these either, but they were needed because we implemented
     // custom versions of all the other types:
-    public class ApplicationUserStore
+    public class ApplicationUserStore 
+        ///: UserStore<ApplicationUser>
         : UserStore<ApplicationUser, ApplicationRole, string,
             ApplicationUserLogin, ApplicationUserRole,
             ApplicationUserClaim>, IUserStore<ApplicationUser, string>,
@@ -103,7 +112,7 @@ namespace spsServerAPI.Models
         public ApplicationUserStore()
             : this(new IdentityDbContext())
         {
-            base.DisposeContext = true;
+            //base.DisposeContext = true;
         }
 
         public ApplicationUserStore(DbContext context)
@@ -114,6 +123,7 @@ namespace spsServerAPI.Models
 
 
     public class ApplicationRoleStore
+        //: RoleStore<ApplicationRole>
     : RoleStore<ApplicationRole, string, ApplicationUserRole>,
     IQueryableRoleStore<ApplicationRole, string>,
     IRoleStore<ApplicationRole, string>, IDisposable
@@ -121,7 +131,7 @@ namespace spsServerAPI.Models
         public ApplicationRoleStore()
             : base(new IdentityDbContext())
         {
-            base.DisposeContext = true;
+            //base.DisposeContext = true;
         }
 
         public ApplicationRoleStore(DbContext context)

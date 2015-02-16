@@ -17,7 +17,9 @@ using spsServerAPI.Models;
 using spsServerAPI.Providers;
 using spsServerAPI.Results;
 using System.Data.Entity;
-
+using Microsoft.Owin.Host.SystemWeb;
+using System.Web.Routing;
+using System.Web.Helpers;
 
 namespace spsServerAPI.Controllers
 {
@@ -30,19 +32,21 @@ namespace spsServerAPI.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
-        private ApplicationRoleManager _roleManager;
+        //private ApplicationRoleManager _roleManager;
 
-        public ApplicationRoleManager RoleManager
-        {
-            //get { return _roleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>(); }
+        //public ApplicationRoleManager RoleManager
+        //{
+        //    //get { return _roleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>(); }
+        //    get { return _roleManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationRoleManager>(); }
             
-            set { _roleManager = value; }
-        }
+        //    set { _roleManager = value; }
+        //}
 
         ApplicationDbContext autDb = new ApplicationDbContext();
 
         public AccountController()
         {
+            _userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -112,30 +116,31 @@ namespace spsServerAPI.Controllers
                 return null;
             }
 
-            List<UserLoginInfoViewModel> logins = new List<UserLoginInfoViewModel>();
-            foreach (ApplicationUserLogin linkedAccount in user.Logins)
-            {
-                logins.Add(new UserLoginInfoViewModel
-                {
-                    LoginProvider = linkedAccount.LoginProvider,
-                    ProviderKey = linkedAccount.ProviderKey
-                });
-            }
 
-            if (user.PasswordHash != null)
-            {
-                logins.Add(new UserLoginInfoViewModel
-                {
-                    LoginProvider = LocalLoginProvider,
-                    ProviderKey = user.UserName,
-                });
-            }
+        //    List<UserLoginInfoViewModel> logins = new List<UserLoginInfoViewModel>();
+        //    foreach (ApplicationUserLogin linkedAccount in user.Logins)
+        //    {
+        //        logins.Add(new UserLoginInfoViewModel
+        //        {
+        //            LoginProvider = linkedAccount.LoginProvider,
+        //            ProviderKey = linkedAccount.ProviderKey
+        //        });
+        //    }
+
+        //    if (user.PasswordHash != null)
+        //    {
+        //        logins.Add(new UserLoginInfoViewModel
+        //        {
+        //            LoginProvider = LocalLoginProvider,
+        //            ProviderKey = user.UserName,
+        //        });
+        //    }
 
             return new ManageInfoViewModel
             {
                 LocalLoginProvider = LocalLoginProvider,
                 Email = user.UserName,
-                Logins = logins,
+                //Logins = logins,
                 ExternalLoginProviders = GetExternalLogins(returnUrl, generateState)
             };
         }
@@ -352,27 +357,65 @@ namespace spsServerAPI.Controllers
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
         {
+            var manager = UserManager;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, Approved = false };
-
-            autDb.Users.Add(user);
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
             
+            ApplicationRole role = await autDb.Roles.FirstOrDefaultAsync(r => r.Name == model.roleType);
+            if (role == null)
+                return BadRequest("Illegal roleType");
 
-            if (!result.Succeeded)
+            PasswordHasher p = new PasswordHasher();
+            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, Approved = false, PasswordHash = p.HashPassword(model.Password) };
+            autDb.Users.Add(user);
+            user.Roles.Add(new ApplicationUserRole { RoleId = role.Id });
+            try
             {
-                return GetErrorResult(result);
+                autDb.SaveChanges();
+                setupStudent(model);
             }
-            var Role = await autDb.Roles.FirstAsync( r => r.Name == "unathorised");
-            //ApplicationRole role = RoleManager.FindByName("unapproved");
-            //ApplicationRole Role = await RoleManager.Roles.SingleAsync(r => r.Name == "unapproved");
-            user.Roles.Add(new ApplicationUserRole() { RoleId = Role.Id, UserId = user.Id });
+            catch(System.Data.Entity.Validation.DbEntityValidationException err)
+            {
+                return BadRequest("Error Adding User " + err.Message);
+            }
+           //autDb.Users.Add(user);
+            
+            //var manager = HttpContext.Current.Request.GetOwinContext().GetUserManager<ApplicationUserManager>(); 
+        //    var manager = new ApplicationUserManager(
+        //    new UserStore<ApplicationUser, ApplicationRole, string,
+        //ApplicationUserLogin, ApplicationUserRole,
+        //ApplicationUserClaim>(Request.GetOwinContext().Get<ApplicationDbContext>()));
 
-            return Ok();
+            //IdentityResult result = await manager.CreateAsync(user, model.Password);
+
+
+            
+            //ApplicationRole Role = await RoleManager.Roles.SingleAsync(r => r.Name == "unapproved");
+            //user.Roles.Add(new ApplicationUserRole() { RoleId = Role.Id, UserId = user.Id });
+
+            return Ok(user);
+        }
+
+
+        private async void setupStudent(RegisterBindingModel model)
+        {
+            Model m = new Model();
+            var programmeStage = await m.ProgrammeStages.FirstOrDefaultAsync(ps => ps.ProgrammeCode == model.memberOf && ps.Stage == model.Stage);
+            // Add student as a member of a student programme stage
+            m.Students.Add(
+                new Student
+                {
+                    SID = model.Email,
+                    FirstName = model.Fname,
+                    SecondName = model.Sname,
+                    StudentProgrammeStages = new List<StudentProgrammeStage>()
+                               { new StudentProgrammeStage { ProgrammeStageID = programmeStage.Id,
+                                SID = model.Email, Year = DateTime.Now.Year }
+                        }
+                });
+            m.SaveChanges();
         }
 
         
@@ -422,16 +465,16 @@ namespace spsServerAPI.Controllers
             return Ok();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if(UserManager != null)
-                    UserManager.Dispose();
-            }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        if(UserManager != null)
+        //            UserManager.Dispose();
+        //    }
 
-            base.Dispose(disposing);
-        }
+        //    base.Dispose(disposing);
+        //}
 
         #region Helpers
 
