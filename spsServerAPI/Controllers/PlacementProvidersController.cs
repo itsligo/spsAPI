@@ -29,6 +29,28 @@ namespace spsServerAPI.Controllers
             return db.PlacementProviders;
         }
 
+
+        // GET: api/PlacementProviders
+        [Route("GetPlacementProvidersDetails")]
+        public dynamic GetPlacementProviderDetails()
+        {
+            return (from pp in db.PlacementProviders
+                    select new
+                    {
+                        pp.ProviderID,
+                        pp.ProviderName,
+                        pp.ProviderDescription,
+                        pp.AddressLine1,
+                        pp.AddressLine2,
+                        pp.City,
+                        pp.County,
+                        pp.ContactNumber,
+                        pp.Country
+                    });
+        }
+
+
+
         // GET: api/PlacementProviders
         [Route("GetPlacementProvidersList")]
         public dynamic GetPlacementProvidersList()
@@ -44,17 +66,29 @@ namespace spsServerAPI.Controllers
 
 
         // GET: api/PlacementProviders/5
-        [Route("PlacementProvider/{id:int}")]
+        [Route("GetPlacementProvider/{id:int}")]
         [ResponseType(typeof(PlacementProvider))]
         public IHttpActionResult GetPlacementProvider(int id)
         {
-            PlacementProvider placementProvider = db.PlacementProviders.Find(id);
-            if (placementProvider == null)
+            var pp = db.PlacementProviders.Where(p => p.ProviderID == id).Select(
+                p => new {
+                    
+                        p.ProviderID,
+                        p.ProviderName,
+                        p.ProviderDescription,
+                        p.AddressLine1,
+                        p.AddressLine2,
+                        p.City,
+                        p.County,
+                        p.ContactNumber,
+                        p.Country
+                });
+
+            if (pp == null)
             {
                 return NotFound();
             }
-
-            return Ok(placementProvider);
+            return Ok(pp) ;
         }
 
         [Route("PlacementProviders/{pname:alpha}")]
