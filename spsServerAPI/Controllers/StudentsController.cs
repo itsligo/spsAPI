@@ -28,6 +28,37 @@ namespace spsServerAPI.Controllers
             return db.Students;
         }
 
+        // GET: api/Students
+        [Route("GetStudentsList/{year:int}")]
+        public dynamic GetStudentsList(int year)
+        {
+        
+            var result = (from s in db.Students
+                          join sps in db.StudentProgrammeStages
+                          on s.SID equals sps.SID
+                               join ps in db.ProgrammeStages
+                               on sps.ProgrammeStageID equals ps.Id
+                               join p in db.Programmes
+                               on ps.ProgrammeCode equals p.ProgrammeCode
+                               where sps.Year == year
+                          select new
+                          {
+                              s.SID,
+                              s.FirstName,
+                              s.SecondName,
+                              p.ProgrammeName, 
+                              ps.Stage 
+                               });
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+
+
+        }
+
         // GET: api/Students/5
         [Route("GetStudent/{id}")]
         [ResponseType(typeof(Student))]
@@ -208,7 +239,7 @@ namespace spsServerAPI.Controllers
 
         // PUT: api/Students/5
         [ResponseType(typeof(void))]
-        [Route("PutStudent/{id:int}")]
+        [Route("PutStudent/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
         public async Task<IHttpActionResult> PutStudent(string id, Student student)
         {
             if (!ModelState.IsValid)
@@ -275,7 +306,7 @@ namespace spsServerAPI.Controllers
 
         // DELETE: api/Students/5
         [ResponseType(typeof(Student))]
-        [Route("DeleteStudent/{id:int}")]
+        [Route("DeleteStudent/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
         public async Task<IHttpActionResult> DeleteStudent(string id)
         {
             Student student = await db.Students.FindAsync(id);
