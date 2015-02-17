@@ -33,36 +33,66 @@ namespace spsServerAPI.Controllers
 
         //get: GetStudentPlacementByStudentID
         [ResponseType(typeof(List<StudentPlacement>))]
-        [Route("GetStudentPlacementByStudentID/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
+        [Route("GetStudentPlacementByStudentID/SID/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/Year/{year:int}")]
 
-        public async Task<IHttpActionResult> GetStudentPlacementByStudentID(string id)
+        public dynamic GetStudentPlacementByStudentID(string id, int year)
         {
             var studentPlacements = db.StudentPlacements
+                                        .Include("Placement")
+                                        .Include("Student")
                                         .OrderBy(sp => sp.SPID)
                                             .Where(sp => sp.SID == id)
-                                            .Select(sp => sp);
+                                            .Where(sp => sp.Placement.FinishDate.Value.Year == year)
+                                            .Select(sp => new {
+                                                sp.SPID,
+                                                sp.SID,
+                                                sp.Student.FirstName,
+                                                sp.Student.SecondName,
+                                                sp.Status,
+                                                sp.Preference,
+                                                sp.Placement.PlacementDescription,
+                                                sp.Placement.StartDate,
+                                                sp.Placement.FinishDate
+                                            });
             if (studentPlacements.Count() == 0)
             {
                 return NotFound();
             }
-            return Ok(studentPlacements.ToList());
+            return Ok(studentPlacements);
         }
 
         // GET: api/StudentPlacementsByPlacementId/5
-        [ResponseType(typeof(List<StudentPlacement>))]
+        //[ResponseType(typeof(List<StudentPlacement>))]
+        [Route("GetStudentPlacementsByPlacementIdAndYear/PID/{id:int}/Year/{year:int}")]
+        public dynamic GetStudentPlacementsByPlacementIdAndYear(int id, int year)
+        {   
+            var studentPlacements = db.StudentPlacements
+                .Include("Placement")
+                .Where(sp => sp.PlacementID == id).Where(sp => sp.Placement.StartDate.Value.Year == year);
+            if (studentPlacements.Count() == 0)
+            {
+                string message = "No Student Placement for PID " + id.ToString() + " and Year " + year.ToString();
+                return NotFound(message);
+            }
+
+            return Ok(studentPlacements);
+        }
+
+        // GET: api/StudentPlacementsByPlacementId/5
+        //[ResponseType(typeof(List<StudentPlacement>))]
         [Route("GetStudentPlacementsByPlacementId/{id:int}")]
         public dynamic GetStudentPlacementsByPlacementId(int id)
         {
-            var studentPlacements = db.StudentPlacements.Include("Placements").Where(sp => sp.PlacementID == id);
+            var studentPlacements = db.StudentPlacements
+                .Include("Placement")
+                .Where(sp => sp.PlacementID == id);
             if (studentPlacements.Count() == 0)
             {
-                return NotFound();
+                string message = "No Student Placement for PID " + id.ToString();
+                return NotFound(message);
             }
-
-            return Ok(studentPlacements.ToList());
+            return Ok(studentPlacements);
         }
-
-
         // GET: api/StudentPlacements/5
         [ResponseType(typeof(StudentPlacement))]
         [Route("GetStudentPlacement/{id:int}")]
