@@ -171,6 +171,7 @@ namespace spsServerAPI.Controllers
         [Route("PostPlacement")]
         public IHttpActionResult PostPlacement(Placement placement)
         {
+            placement.Filled = false;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

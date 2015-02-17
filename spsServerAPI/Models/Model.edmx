@@ -927,9 +927,9 @@
       </DesignerInfoPropertySet>
     </Options>
     <Diagrams >
-      <Diagram DiagramId="79689d767c37438c888d08b35b7b6bc8" Name="Diagram1" ZoomLevel="100">
+      <Diagram DiagramId="79689d767c37438c888d08b35b7b6bc8" Name="Diagram1" ZoomLevel="81">
         <EntityTypeShape EntityType="spsServerAPI.Models.AllowablePlacement" Width="1.5" PointX="18.625" PointY="7.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.Placement" Width="1.5" PointX="11" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Placement" Width="2.25" PointX="11" PointY="5.5" IsExpanded="true" />
         <EntityTypeShape EntityType="spsServerAPI.Models.PlacementProvider" Width="1.5" PointX="6.5" PointY="10.625" IsExpanded="true" />
         <EntityTypeShape EntityType="spsServerAPI.Models.PlacementSupervisor" Width="1.5" PointX="0.5" PointY="10.75" IsExpanded="true" />
         <EntityTypeShape EntityType="spsServerAPI.Models.PlacementType" Width="1.5" PointX="13.5" PointY="4" IsExpanded="true" />
@@ -946,11 +946,11 @@
         <AssociationConnector Association="spsServerAPI.Models.PlacementType_Placements" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.Student_StudentPlacements" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.ProgrammeStage_AllowablePlacements" ManuallyRouted="true" >
-          <ConnectorPoint PointX="9.5" PointY="2.5403857421874996" />
-          <ConnectorPoint PointX="12.75875" PointY="2.5403857421874996" />
+          <ConnectorPoint PointX="9.5" PointY="2.672587890625" />
+          <ConnectorPoint PointX="12.75875" PointY="35.963338845443715" />
           <ConnectorPoint PointX="12.75875" PointY="3.6839043692453362" />
           <ConnectorPoint PointX="19.375" PointY="3.6839043692453362" />
-          <ConnectorPoint PointX="19.375" PointY="7.125" />
+          <ConnectorPoint PointX="19.375" PointY="7.1249999999999991" />
         </AssociationConnector>
         <AssociationConnector Association="spsServerAPI.Models.Programme_ProgrammeStages" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.ProgrammeStage_StudentProgrammeStages" ManuallyRouted="false" />

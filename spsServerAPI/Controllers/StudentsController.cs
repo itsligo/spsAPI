@@ -28,6 +28,32 @@ namespace spsServerAPI.Controllers
             return db.Students;
         }
 
+        [Route("GetStudentAssignedToPlacement/PID/{pid:int?}/Status/{status:int?}")]
+        public dynamic GetStudentAssignedToPlacement(int? pid, int? status)
+        {
+            var result = (from s in db.Students
+                          join p in db.StudentPlacements
+                          on s.SID equals p.SID
+                          where p.PlacementID == pid && p.Status == status
+                          select new
+                          {
+                              s.SID,
+                              s.FirstName,
+                              s.SecondName,
+                              
+                          });
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+
+
+
+        }
+
+
         // GET: api/Students
         [Route("GetStudentsList/{year:int}")]
         public dynamic GetStudentsList(int year)
@@ -118,6 +144,7 @@ namespace spsServerAPI.Controllers
             
             return Ok(result);
         }
+
 
         [Route("GetStudentProgrammeStages/SID/{id}")]
         public dynamic GetStudentProgrammeStages(string id)
