@@ -80,9 +80,9 @@ namespace spsServerAPI.Controllers
                           {
                               sp.SPID,
                               sp.Preference,
-                              sp.PlacementID,
                               sp.Status,
-                              p.PlacementProvider,
+                              p.PlacementID,
+                              p.PlacementDescription
                           });
             if (result.Count() == 0)
             {
