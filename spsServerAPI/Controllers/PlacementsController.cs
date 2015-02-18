@@ -74,7 +74,7 @@ namespace spsServerAPI.Controllers
                 new { a.ProgrammeStage.Id, a.ProgrammeStage.Programme.ProgrammeName });
         }
 
-
+        
 
         [Route("GetPlacementYearsList")]
         public dynamic GetPlacementYearList()

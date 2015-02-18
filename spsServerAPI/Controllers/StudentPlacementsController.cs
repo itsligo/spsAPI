@@ -30,6 +30,68 @@ namespace spsServerAPI.Controllers
             return db.StudentPlacements;
         }
 
+        [Route("GetPreferencesByPlcId/PID/{pid:int}/Preference/{pref:int}")]
+        public dynamic GetPreferencesByPlcId(int pid, int? pref)
+        {
+            var result = (from s in db.Students
+                          join sp in db.StudentPlacements
+                          on s.SID equals sp.SID
+                          join p in db.Placements
+                          on sp.PlacementID equals p.PlacementID
+                          join sps in db.StudentProgrammeStages
+                          on s.SID equals sps.SID
+                          join ps in db.ProgrammeStages
+                          on sps.ProgrammeStageID equals ps.Id
+                          where sp.PlacementID == pid
+                          && sp.Preference == pref
+                          && p.StartDate.Value.Year == sps.Year
+
+                          select new
+                          {
+                              s.SID,
+                              s.FirstName,
+                              s.SecondName,
+                              sp.PlacementID,
+                              sp.Status,
+                              ps.ProgrammeCode,
+                              ps.Stage,
+                              sps.Year
+                          });
+            if (result.Count() == 0)
+            {
+                return BadRequest("No matching records for" + pid.ToString() + " and " + pref.ToString());
+            }
+
+            return Ok(result);
+
+        }
+
+        [Route("GetPreferencesBySIDandYear/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/Year/{year:int}")]
+        public dynamic GetPreferencesBySIDandYear(string sid, int year)
+        {
+            var result = (from s in db.Students
+                          join sp in db.StudentPlacements
+                          on s.SID equals sp.SID
+                          join p in db.Placements
+                          on sp.PlacementID equals p.PlacementID
+                          where s.SID == sid
+                          && p.StartDate.Value.Year == year
+                          select new
+                          {
+                              sp.SPID,
+                              sp.Preference,
+                              sp.PlacementID,
+                              sp.Status,
+                              p.PlacementProvider,
+                          });
+            if (result.Count() == 0)
+            {
+                return BadRequest("No matching records for" + sid.ToString() + " and " + year.ToString());
+            }
+
+            return Ok(result);
+
+        }
 
         //get: GetStudentPlacementByStudentID
         [ResponseType(typeof(List<StudentPlacement>))]
@@ -65,9 +127,8 @@ namespace spsServerAPI.Controllers
         //[ResponseType(typeof(List<StudentPlacement>))]
         [Route("GetStudentPlacementsByPlacementIdAndYear/PID/{id:int}/Year/{year:int}")]
         public dynamic GetStudentPlacementsByPlacementIdAndYear(int id, int year)
-        {   
+        {
             var studentPlacements = db.StudentPlacements
-                .Include("Placement")
                 .Where(sp => sp.PlacementID == id).Where(sp => sp.Placement.StartDate.Value.Year == year);
             if (studentPlacements.Count() == 0)
             {
@@ -84,7 +145,6 @@ namespace spsServerAPI.Controllers
         public dynamic GetStudentPlacementsByPlacementId(int id)
         {
             var studentPlacements = db.StudentPlacements
-                .Include("Placement")
                 .Where(sp => sp.PlacementID == id);
             if (studentPlacements.Count() == 0)
             {
