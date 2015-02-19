@@ -167,6 +167,34 @@ namespace spsServerAPI.Controllers
 
             return Ok(studentPlacement);
         }
+        [Route("PostPreferenceSIDPID/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/PID/{pid:int}/Pref/{pref:int}")]
+        
+        public dynamic PostPreferenceSIDPID(string sid, int pid, int pref)
+        {
+            if (db.StudentPlacements.Where(p => p.SID == sid && p.PlacementID == pid && p.Preference == pref)
+                .Select(p => p).Count() > 0)
+                return BadRequest("Preference already exists for this student placement");
+            StudentPlacement sp = new
+                StudentPlacement { SID = sid, PlacementID = pid, Preference = pref, Status = 0 };
+            db.StudentPlacements.Add( sp);
+                db.SaveChanges();
+                return Ok(sp);
+        }
+
+        [Route("DeletePreferenceSIDPID/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/PID/{pid:int}/Pref/{pref:int}")]
+        
+        public dynamic DeletePreferenceSIDPID(string sid, int pid, int pref)
+        {
+            var sps = db.StudentPlacements.Where(p => p.SID == sid && p.PlacementID == pid && p.Preference == pref)
+                .Select(p => p);
+            if (sps.Count() == 0)
+                return BadRequest("Preference does not exist for this student placement");
+            StudentPlacement toDelete = sps.First();
+            db.StudentPlacements.Remove(toDelete);
+            db.SaveChanges();
+            return Ok(toDelete.SPID.ToString() + " was deleted");
+        }
+
 
         // PUT: api/StudentPlacements/5
         [ResponseType(typeof(void))]
