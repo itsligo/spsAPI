@@ -16,6 +16,7 @@ namespace spsServerAPI.Controllers
 {
     [AllowAnonymous]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
+    [RoutePrefix("api/Tutors")]
 
     public class TutorsController : ApiController
     {
@@ -23,10 +24,19 @@ namespace spsServerAPI.Controllers
 
         // GET: api/Tutors
         [Route("api/GetTutors")]
-        public IQueryable<Tutor> GetTutors()
+        public dynamic GetTutors()
         {
-            return db.Tutors;
+            return db.Tutors.Select(t => new 
+            {
+                t.TutorID,
+                t.FirstName,
+                t.SecondName,
+                t.ContactNumber1,
+                t.ContactNumber2
+            });
         }
+
+
 
         // GET: api/Tutors/5
         [ResponseType(typeof(Tutor))]
@@ -39,9 +49,108 @@ namespace spsServerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(tutor);
+            return Ok(db.Tutors.Where(t => t.TutorID == id).Select(t => new 
+            {
+                t.TutorID,
+                t.FirstName,
+                t.SecondName,
+                t.ContactNumber1,
+                t.ContactNumber2
+            }));
         }
 
+        [Route("api/GetTutorVisits/{id:int}")]
+        public async Task<IHttpActionResult> GetTutorVisits(int id)
+        {
+            Tutor tutor = await db.Tutors.FindAsync(id);
+            if (tutor == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(db.Tutors.Include("TutorVisit")
+                .Where(t => t.TutorID == id)
+                .Select(t => new 
+                    {
+                        t.TutorID,
+                        t.FirstName,
+                        t.SecondName,
+                        Visits = t.TutorVisits.Select(visits 
+                            => new {
+                                visits.VisitID,
+                                visits.DateVisited,
+                                visits.Comment
+                            })
+                    }));
+        }
+
+        [Route("api/GetTutorAssignedPlacementsForTutorView/{id:int}")]
+        public async Task<IHttpActionResult> GetTutorAssignedPlacementsForTutorView(int id)
+        {
+            Tutor tutor = await db.Tutors.FindAsync(id);
+            if (tutor == null)
+            {
+                return NotFound();
+            }
+
+            var tutorView = (from t in db.Tutors
+                            join sp in db.StudentPlacements
+                             on t.TutorID equals sp.TutorID
+                             join p in db.Placements
+                             on sp.PlacementID equals p.PlacementID
+                             join pp in db.PlacementProviders
+                             on p.ProviderID equals pp.ProviderID
+                             where t.TutorID == id
+                             select new {
+                                        t.TutorID,
+                                        t.FirstName,
+                                        t.SecondName,
+                                        sp.SID,
+                                        p.PlacementID,
+                                        p.StartDate,
+                                        p.FinishDate,
+                                        pp.ProviderDescription,
+                                        pp.AddressLine1,
+                                        pp.AddressLine2,
+                                        pp.County,
+                                        pp.City,
+                                        pp.ContactNumber
+                                        }
+                             );
+
+            return Ok(tutorView);
+        }
+
+        [Route("api/GetTutorAssignedPlacementsForAdminView")]
+        public async Task<IHttpActionResult> GetTutorAssignedPlacementsForAdminView()
+        {
+            var tutorView = (from t in db.Tutors
+                             join sp in db.StudentPlacements
+                              on t.TutorID equals sp.TutorID
+                             join p in db.Placements
+                             on sp.PlacementID equals p.PlacementID
+                             join pp in db.PlacementProviders
+                             on p.ProviderID equals pp.ProviderID
+                             select new
+                             {
+                                 t.TutorID,
+                                 t.FirstName,
+                                 t.SecondName,
+                                 sp.SID,
+                                 p.PlacementID,
+                                 p.StartDate,
+                                 p.FinishDate,
+                                 pp.ProviderDescription,
+                                 pp.AddressLine1,
+                                 pp.AddressLine2,
+                                 pp.County,
+                                 pp.City,
+                                 pp.ContactNumber
+                             }
+                             );
+
+            return Ok(tutorView);
+        }
         // PUT: api/Tutors/5
         [ResponseType(typeof(void))]
         [Route("api/PutTutor/{id:int}")]
