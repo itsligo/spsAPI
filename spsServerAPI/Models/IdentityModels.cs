@@ -25,6 +25,8 @@ namespace spsServerAPI.Models
         public ApplicationUser()
         {
             this.Id = Guid.NewGuid().ToString();
+            // Must set this or CreateIdentityAsync will fail
+            this.SecurityStamp = Guid.NewGuid().ToString();
         }
 
 
@@ -32,9 +34,16 @@ namespace spsServerAPI.Models
         public async Task<ClaimsIdentity>
             GenerateUserIdentityAsync(ApplicationUserManager manager, string authenticationType)
         {
+            ClaimsIdentity userIdentity = null;
+
+            try { 
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+            userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
             // Add custom user claims here
+            }
+            catch(Exception e){
+                Console.WriteLine(e.Message);
+            }
             return userIdentity;
         }
         public int ProgrammeStageID { get; set; }

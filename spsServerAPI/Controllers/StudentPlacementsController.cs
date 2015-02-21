@@ -188,7 +188,7 @@ namespace spsServerAPI.Controllers
             var sps = db.StudentPlacements.Where(p => p.SID == sid && p.PlacementID == pid && p.Preference == pref)
                 .Select(p => p);
             if (sps.Count() == 0)
-                return BadRequest("Preference does not exist for this student placement");
+                return NoContent("");
             StudentPlacement toDelete = sps.First();
             db.StudentPlacements.Remove(toDelete);
             db.SaveChanges();
@@ -314,6 +314,11 @@ namespace spsServerAPI.Controllers
         protected HttpResponseException BadRequest(string reason)
         {
             return CreateHttpResponseException(reason, HttpStatusCode.BadRequest);
+        }
+
+        protected HttpResponseException NoContent(string reason)
+        {
+            return CreateHttpResponseException(reason, HttpStatusCode.NoContent);
         }
 
         /// <summary>

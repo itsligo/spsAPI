@@ -48,17 +48,8 @@ namespace spsServerAPI.Models
         public string Sname { get; set; }
 
         [Required]
-        [Display(Name = "memberOf")]
-        public string memberOf { get; set; }
-
-        [Required]
-        [Display(Name = "Stage")]
-        public int? Stage { get; set; }
-
-
-        [Required]
-        [Display(Name = "roleType")]
-        public string roleType { get; set; }
+        [Display(Name = "ProgrammeStageID")]
+        public int ProgrammeStageID { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

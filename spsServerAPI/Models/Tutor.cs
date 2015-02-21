@@ -19,6 +19,9 @@ namespace spsServerAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TutorID { get; set; }
 
+        [EmailAddress]
+        public string Email { get; set; }
+
         public string FirstName { get; set; }
 
         public string SecondName { get; set; }

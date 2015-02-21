@@ -254,6 +254,10 @@
     <Compile Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.Designer.cs">
       <DependentUpon>201502111233111_ChangeProgrammeStageYearToInt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Database\spsMigrations\201502202336397_tutorEmailAdded.cs" />
+    <Compile Include="Database\spsMigrations\201502202336397_tutorEmailAdded.Designer.cs">
+      <DependentUpon>201502202336397_tutorEmailAdded.cs</DependentUpon>
+    </Compile>
     <Compile Include="Database\spsMigrations\Configuration.cs" />
     <Compile Include="Database\UserManagementMigrations\201501021456049_initial.cs" />
     <Compile Include="Database\UserManagementMigrations\201501021456049_initial.Designer.cs">
@@ -385,6 +389,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.resx">
       <DependentUpon>201502111233111_ChangeProgrammeStageYearToInt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\spsMigrations\201502202336397_tutorEmailAdded.resx">
+      <DependentUpon>201502202336397_tutorEmailAdded.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\UserManagementMigrations\201501021456049_initial.resx">
       <DependentUpon>201501021456049_initial.cs</DependentUpon>

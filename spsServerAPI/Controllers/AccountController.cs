@@ -363,12 +363,23 @@ namespace spsServerAPI.Controllers
                 return BadRequest(ModelState);
             }
             
-            ApplicationRole role = await autDb.Roles.FirstOrDefaultAsync(r => r.Name == model.roleType);
-            if (role == null)
-                return BadRequest("Illegal roleType");
+            ApplicationRole role = await autDb.Roles.FirstOrDefaultAsync(r => r.Name == "unapproved");
+            //if (role == null)
+            //    return BadRequest("Illegal roleType");
 
             PasswordHasher p = new PasswordHasher();
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, Approved = false, PasswordHash = p.HashPassword(model.Password) };
+            var user = new ApplicationUser() { 
+                FirstName=model.Fname, 
+                SecondName = model.Sname, 
+                UserName = model.Email, 
+                Email = model.Email, 
+                Approved = false, 
+                PasswordHash = p.HashPassword(model.Password),
+                ProgrammeStageID = model.ProgrammeStageID,
+                //SecurityStamp = new Guid(model.Email).ToString() 
+                // now done in Application user constructor
+                 
+            };
             autDb.Users.Add(user);
             user.Roles.Add(new ApplicationUserRole { RoleId = role.Id });
             try
@@ -399,10 +410,11 @@ namespace spsServerAPI.Controllers
         }
 
 
+
         private async void setupStudent(RegisterBindingModel model)
         {
             Model m = new Model();
-            var programmeStage = await m.ProgrammeStages.FirstOrDefaultAsync(ps => ps.ProgrammeCode == model.memberOf && ps.Stage == model.Stage);
+            //var programmeStage = await m.ProgrammeStages.FirstOrDefaultAsync(ps => ps.Id == model.ProgrammeStageID);
             // Add student as a member of a student programme stage
             m.Students.Add(
                 new Student
@@ -411,7 +423,7 @@ namespace spsServerAPI.Controllers
                     FirstName = model.Fname,
                     SecondName = model.Sname,
                     StudentProgrammeStages = new List<StudentProgrammeStage>()
-                               { new StudentProgrammeStage { ProgrammeStageID = programmeStage.Id,
+                               { new StudentProgrammeStage { ProgrammeStageID = model.ProgrammeStageID,
                                 SID = model.Email, Year = DateTime.Now.Year }
                         }
                 });

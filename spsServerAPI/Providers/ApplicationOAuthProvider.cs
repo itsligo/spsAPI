@@ -52,15 +52,24 @@ namespace spsServerAPI.Providers
                 return;
             }
                 var role = roleManager.FindById(user.Roles.First().RoleId);
+                ClaimsIdentity oAuthIdentity = null ;
+                try
+                {
+                    oAuthIdentity = await
+                        user.GenerateUserIdentityAsync(userManager,
+                                            OAuthDefaults.AuthenticationType);
+                    // asuming only one role per user
+                    oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+                    oAuthIdentity.AddClaim(new Claim("sub", context.UserName));
+                    oAuthIdentity.AddClaim(new Claim("role", role.Name)); 
+                }
 
-            ClaimsIdentity oAuthIdentity = await 
-                user.GenerateUserIdentityAsync(userManager,
-                                    OAuthDefaults.AuthenticationType);
-            
-            // asuming only one role per user
-            oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-            oAuthIdentity.AddClaim(new Claim("sub", context.UserName));
-            oAuthIdentity.AddClaim(new Claim("role", role.Name)); 
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                   // context.SetError("claims error", e.Message);
+                    
+                }
 
 
             // Deec 2014 turning off cookies oauth bearer tokens only

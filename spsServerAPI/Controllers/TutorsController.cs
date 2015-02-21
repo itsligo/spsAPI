@@ -23,7 +23,7 @@ namespace spsServerAPI.Controllers
         private Model db = new Model();
 
         // GET: api/Tutors
-        [Route("api/GetTutors")]
+        [Route("GetTutors")]
         public dynamic GetTutors()
         {
             return db.Tutors.Select(t => new 
@@ -40,7 +40,7 @@ namespace spsServerAPI.Controllers
 
         // GET: api/Tutors/5
         [ResponseType(typeof(Tutor))]
-        [Route("api/GetTutor/{id:int}")]
+        [Route("GetTutor/{id:int}")]
         public async Task<IHttpActionResult> GetTutor(int id)
         {
             Tutor tutor = await db.Tutors.FindAsync(id);
@@ -59,7 +59,7 @@ namespace spsServerAPI.Controllers
             }));
         }
 
-        [Route("api/GetTutorVisits/{id:int}")]
+        [Route("GetTutorVisits/{id:int}")]
         public async Task<IHttpActionResult> GetTutorVisits(int id)
         {
             Tutor tutor = await db.Tutors.FindAsync(id);
@@ -84,7 +84,7 @@ namespace spsServerAPI.Controllers
                     }));
         }
 
-        [Route("api/GetTutorAssignedPlacementsForTutorView/{id:int}")]
+        [Route("GetTutorAssignedPlacementsForTutorView/{id:int}")]
         public async Task<IHttpActionResult> GetTutorAssignedPlacementsForTutorView(int id)
         {
             Tutor tutor = await db.Tutors.FindAsync(id);
@@ -121,7 +121,7 @@ namespace spsServerAPI.Controllers
             return Ok(tutorView);
         }
 
-        [Route("api/GetTutorAssignedPlacementsForAdminView")]
+        [Route("GetTutorAssignedPlacementsForAdminView")]
         public async Task<IHttpActionResult> GetTutorAssignedPlacementsForAdminView()
         {
             var tutorView = (from t in db.Tutors
@@ -153,7 +153,7 @@ namespace spsServerAPI.Controllers
         }
         // PUT: api/Tutors/5
         [ResponseType(typeof(void))]
-        [Route("api/PutTutor/{id:int}")]
+        [Route("PutTutor/{id:int}")]
         public async Task<IHttpActionResult> PutTutor(int id, Tutor tutor)
         {
             if (!ModelState.IsValid)
@@ -189,7 +189,7 @@ namespace spsServerAPI.Controllers
 
         // POST: api/Tutors
         [ResponseType(typeof(Tutor))]
-        [Route("api/PostTutors")]
+        [Route("PostTutors")]
         public async Task<IHttpActionResult> PostTutor(Tutor tutor)
         {
             if (!ModelState.IsValid)
@@ -202,6 +202,8 @@ namespace spsServerAPI.Controllers
             try
             {
                 await db.SaveChangesAsync();
+                //AccountController accMan = new AccountController();
+                //await accMan.Register(new RegisterBindingModel { Fname = tutor.FirstName });
             }
             catch (DbUpdateException)
             {
@@ -220,7 +222,7 @@ namespace spsServerAPI.Controllers
 
         // DELETE: api/Tutors/5
         [ResponseType(typeof(Tutor))]
-        [Route("api/DeleteTutor/{id:int}")]
+        [Route("DeleteTutor/{id:int}")]
         public async Task<IHttpActionResult> DeleteTutor(int id)
         {
             Tutor tutor = await db.Tutors.FindAsync(id);
