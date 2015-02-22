@@ -259,13 +259,9 @@
     <Compile Include="Database\spsMigrations\201502202336397_tutorEmailAdded.Designer.cs">
       <DependentUpon>201502202336397_tutorEmailAdded.cs</DependentUpon>
     </Compile>
-    <Compile Include="Database\spsMigrations\201502212009129_PlacedTableAdded.cs" />
-    <Compile Include="Database\spsMigrations\201502212009129_PlacedTableAdded.Designer.cs">
-      <DependentUpon>201502212009129_PlacedTableAdded.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Database\spsMigrations\201502212207257_redoChangesDueToEdmxFeckUp.cs" />
-    <Compile Include="Database\spsMigrations\201502212207257_redoChangesDueToEdmxFeckUp.Designer.cs">
-      <DependentUpon>201502212207257_redoChangesDueToEdmxFeckUp.cs</DependentUpon>
+    <Compile Include="Database\spsMigrations\201502221755504_PlacedTableIntroduced.cs" />
+    <Compile Include="Database\spsMigrations\201502221755504_PlacedTableIntroduced.Designer.cs">
+      <DependentUpon>201502221755504_PlacedTableIntroduced.cs</DependentUpon>
     </Compile>
     <Compile Include="Database\spsMigrations\Configuration.cs" />
     <Compile Include="Database\UserManagementMigrations\201501021456049_initial.cs" />
@@ -285,12 +281,6 @@
     <Compile Include="Models\Enum.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Model.cs" />
-    <Compile Include="Models\Model.Designer.cs" />
-    <Compile Include="Models\Model1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\Placed.cs" />
     <Compile Include="Models\Placement.cs" />
     <Compile Include="Models\PlacementProvider.cs" />
@@ -344,10 +334,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="Database\spsClasses.cd" />
-    <EntityDeploy Include="Models\Model.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
-    </EntityDeploy>
     <None Include="Properties\PublishProfiles\spsServerAPI.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -404,11 +390,8 @@
     <EmbeddedResource Include="Database\spsMigrations\201502202336397_tutorEmailAdded.resx">
       <DependentUpon>201502202336397_tutorEmailAdded.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Database\spsMigrations\201502212009129_PlacedTableAdded.resx">
-      <DependentUpon>201502212009129_PlacedTableAdded.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Database\spsMigrations\201502212207257_redoChangesDueToEdmxFeckUp.resx">
-      <DependentUpon>201502212207257_redoChangesDueToEdmxFeckUp.cs</DependentUpon>
+    <EmbeddedResource Include="Database\spsMigrations\201502221755504_PlacedTableIntroduced.resx">
+      <DependentUpon>201502221755504_PlacedTableIntroduced.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\UserManagementMigrations\201501021456049_initial.resx">
       <DependentUpon>201501021456049_initial.cs</DependentUpon>

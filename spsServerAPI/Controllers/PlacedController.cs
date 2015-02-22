@@ -39,7 +39,7 @@ namespace spsServerAPI.Controllers
                        on p.PlacementID equals ap.PlacementID
                        join ps in db.ProgrammeStages
                        on ap.ProgrammeStageID equals ps.Id
-                       where placed.PID == pid && placed.Year == year
+                       where placed.PID == pid && placed.Year == p.StartDate.Value.Year
                        select new 
                        {
                        SID = placed.SID,

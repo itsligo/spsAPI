@@ -8,8 +8,10 @@ namespace spsServerAPI.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
     
+    [Table("Placed")]
     public partial class Placed
     {
+
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -19,10 +21,10 @@ namespace spsServerAPI.Models
         [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string SID { get; set; }
+
         public int Year { get; set; }
-        public Nullable<int> PlacedPlacement_PlacementID { get; set; }
-    
-        public virtual Placement Placement { get; set; }
-        public virtual Student Student { get; set; }
+
+        public virtual Placement PlacedPlacement { get; set; }
+        public virtual Student PlacedStudent { get; set; }
     }
 }

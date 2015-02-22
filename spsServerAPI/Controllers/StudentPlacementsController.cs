@@ -23,6 +23,16 @@ namespace spsServerAPI.Controllers
         private Model db = new Model();
 
 
+        [Route("GetAllStudentsWtihOrWithOutPlacement/PID/{pid:int}/Year/{year:int}")]
+        public dynamic GetAllStudentsWtihOrWithOutPlacement(int pid, int year)
+        {
+            var retWith = GetStudentsWithPreferencesForPlacement(pid, year);
+            var retWithOut = GetStudentsWithPreferencesForPlacement(pid, year);
+
+            return Ok();
+
+            
+        }
         [Route("GetStudentsWithPreferencesForPlacement/PID/{pid:int}/Year/{year:int}")]
         public dynamic GetStudentsWithPreferencesForPlacement(int pid, int year)
         {
@@ -80,7 +90,7 @@ namespace spsServerAPI.Controllers
                        }
                            );
 
-            return ret;
+            return ret.ToList();
         }
 
         // GET: api/StudentPlacements

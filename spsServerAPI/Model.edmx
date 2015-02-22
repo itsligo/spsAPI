@@ -107,7 +107,7 @@
           <Property Name="MemberID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ProgrammeStageID" Type="Int32" />
-          <Property Name="Year" Type="Int32" />
+          <Property Name="Year" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="ProgrammeStage" Relationship="Self.ProgrammeStage_StudentProgrammeStages" FromRole="ProgrammeStage_StudentProgrammeStages_Target" ToRole="ProgrammeStage_StudentProgrammeStages_Source" />
           <NavigationProperty Name="Student" Relationship="Self.Student_StudentProgrammeStages" FromRole="Student_StudentProgrammeStages_Target" ToRole="Student_StudentProgrammeStages_Source" />
         </EntityType>
@@ -630,7 +630,7 @@
           <Property Name="MemberID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SID" Type="nvarchar" customannotation:Index="{ Name: IX_SID, Order: 0 }" MaxLength="50" Nullable="true" />
           <Property Name="ProgrammeStageID" Type="int" customannotation:Index="{ Name: IX_ProgrammeStageID, Order: 0 }" Nullable="true" />
-          <Property Name="Year" Type="int" Nullable="true" />
+          <Property Name="Year" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="ProgrammeStage">
           <Key>
@@ -927,26 +927,25 @@
       </DesignerInfoPropertySet>
     </Options>
     <Diagrams >
-      <Diagram DiagramId="79689d767c37438c888d08b35b7b6bc8" Name="Diagram1" ZoomLevel="81">
-        <EntityTypeShape EntityType="spsServerAPI.Models.AllowablePlacement" Width="1.5" PointX="16.375" PointY="6.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.Placement" Width="2.25" PointX="11" PointY="5.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementProvider" Width="1.5" PointX="6.5" PointY="10.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementSupervisor" Width="1.5" PointX="0.5" PointY="10.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementType" Width="1.5" PointX="13.5" PointY="4" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.StudentPlacement" Width="1.5" PointX="7.125" PointY="3.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.Student" Width="1.5" PointX="0.75" PointY="6.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.StudentProgrammeStage" Width="1.5" PointX="2.25" PointY="3" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.ProgrammeStage" Width="1.5" PointX="8" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.Programme" Width="1.5" PointX="12.125" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.Tutor" Width="1.5" PointX="4.125" PointY="8.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="spsServerAPI.Models.TutorVisit" Width="1.5" PointX="7" PointY="7.5" IsExpanded="true" />
+      <Diagram DiagramId="1136d8e1c8de49a0b7eaca7016c047f2" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="spsServerAPI.Models.AllowablePlacement" Width="2.125" PointX="13.875" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Placement" Width="1.5" PointX="6.125" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementProvider" Width="2.125" PointX="9.25" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementSupervisor" Width="2" PointX="12.125" PointY="8.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.PlacementType" Width="1.5" PointX="6.25" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.StudentPlacement" Width="2.125" PointX="3.375" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Student" Width="1.5" PointX="1.125" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.StudentProgrammeStage" Width="2.375" PointX="13.25" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.ProgrammeStage" Width="2.625" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Programme" Width="1.5" PointX="0.75" PointY="2.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.Tutor" Width="1.5" PointX="0.875" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="spsServerAPI.Models.TutorVisit" Width="1.5" PointX="0.875" PointY="10.5" IsExpanded="true" />
         <AssociationConnector Association="spsServerAPI.Models.Placement_AllowablePlacements" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.PlacementProvider_Placements" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.PlacementSupervisor_PlacementProvider" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.PlacementType_Placements" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.Student_StudentPlacements" ManuallyRouted="false" />
-        <AssociationConnector Association="spsServerAPI.Models.ProgrammeStage_AllowablePlacements" ManuallyRouted="false" >
-        </AssociationConnector>
+        <AssociationConnector Association="spsServerAPI.Models.ProgrammeStage_AllowablePlacements" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.Programme_ProgrammeStages" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.ProgrammeStage_StudentProgrammeStages" ManuallyRouted="false" />
         <AssociationConnector Association="spsServerAPI.Models.Student_StudentProgrammeStages" ManuallyRouted="false" />

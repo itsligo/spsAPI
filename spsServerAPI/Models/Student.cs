@@ -13,6 +13,7 @@ namespace spsServerAPI.Models
         {
             StudentProgrammeStages = new HashSet<StudentProgrammeStage>();
             StudentPlacements = new HashSet<StudentPlacement>();
+            //StudentPlaced = new HashSet<Placed>();
         }
 
         [Key]
@@ -24,6 +25,8 @@ namespace spsServerAPI.Models
         public string SecondName { get; set; }
 
         public virtual ICollection<StudentProgrammeStage> StudentProgrammeStages { get; set; }
+
+        //public virtual ICollection<Placed> StudentPlaced { get; set; }
 
         public virtual ICollection<StudentPlacement> StudentPlacements { get; set; }
     }

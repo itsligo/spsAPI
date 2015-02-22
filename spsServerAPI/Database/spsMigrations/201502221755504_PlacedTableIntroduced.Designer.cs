@@ -7,13 +7,13 @@ namespace spsServerAPI.Database.spsMigrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.1-30610")]
-    public sealed partial class redoChangesDueToEdmxFeckUp : IMigrationMetadata
+    public sealed partial class PlacedTableIntroduced : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(redoChangesDueToEdmxFeckUp));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(PlacedTableIntroduced));
         
         string IMigrationMetadata.Id
         {
-            get { return "201502212207257_redoChangesDueToEdmxFeckUp"; }
+            get { return "201502221755504_PlacedTableIntroduced"; }
         }
         
         string IMigrationMetadata.Source

@@ -81,6 +81,9 @@ namespace spsServerAPI.Models
                 .HasMany(e => e.TutorVisits)
                 .WithOptional(e => e.Tutor)
                 .WillCascadeOnDelete();
+
+
+
         }
 
         //public System.Data.Entity.DbSet<spsServerAPI.Models.Placed> Placeds { get; set; }

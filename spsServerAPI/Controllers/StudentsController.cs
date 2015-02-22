@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using spsServerAPI.Models;
 using System.Web.Http.Cors;
+using Microsoft.AspNet.Identity;
 
 namespace spsServerAPI.Controllers
 {
@@ -328,6 +329,48 @@ namespace spsServerAPI.Controllers
                 }
             }
 
+            // Add student to the authdb
+            using(ApplicationDbContext autDb = new ApplicationDbContext())
+            {
+                
+                var exists = await autDb.Users.SingleOrDefaultAsync(
+                    s => s.UserName == student.SID);
+                if(exists == null)
+                {
+                    ApplicationRole role = await autDb.Roles.FirstOrDefaultAsync(
+                        r => r.Name == "student");
+                    PasswordHasher p = new PasswordHasher();
+                    var user = new ApplicationUser()
+                    {
+                        FirstName = student.FirstName,
+                        SecondName = student.SecondName,
+                        UserName = student.SID,
+                        Email = student.SID,
+                        Approved = true,
+                        PasswordHash = p.HashPassword(student.SID),
+                        // Should only beone
+                        ProgrammeStageID =(int)(from ps in student.StudentProgrammeStages
+                                            select new 
+                                            { ps.ProgrammeStageID })
+                                            .First().ProgrammeStageID
+                        //SecurityStamp = new Guid(model.Email).ToString() 
+                        // now done in Application user constructor
+
+                    };
+                    autDb.Users.Add(user);
+                    user.Roles.Add(new ApplicationUserRole { RoleId = role.Id });
+                    try
+                    {
+                        await autDb.SaveChangesAsync();
+                        
+                    }
+                    catch (System.Data.Entity.Validation.DbEntityValidationException err)
+                    {
+                        return BadRequest("Error Adding User login while adding student " + err.Message);
+                    }
+
+                }
+            }
             return Ok(student);
         }
 
@@ -344,7 +387,15 @@ namespace spsServerAPI.Controllers
 
             db.Students.Remove(student);
             await db.SaveChangesAsync();
-
+            using (ApplicationDbContext autDb = new ApplicationDbContext())
+            {
+                ApplicationUser user = await autDb.Users
+                    .FirstOrDefaultAsync(s => s.UserName == student.SID);
+                if(user == null)
+                    return BadRequest("No login account found for " + student.SID);
+                // should cascade deletes of roles as well
+                autDb.Users.Remove(user);
+            }
             return Ok(student);
         }
 

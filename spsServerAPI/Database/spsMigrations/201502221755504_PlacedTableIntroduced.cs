@@ -3,7 +3,7 @@ namespace spsServerAPI.Database.spsMigrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class PlacedTableAdded : DbMigration
+    public partial class PlacedTableIntroduced : DbMigration
     {
         public override void Up()
         {
