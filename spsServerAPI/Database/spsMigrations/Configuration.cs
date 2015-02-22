@@ -65,7 +65,7 @@ namespace spsServerAPI.Database.spsMigrations
                 }
                 context.SaveChanges();
             }
-            if (context.StudentProgrammeStages.Count()  == null)
+            if (context.StudentProgrammeStages.Count()  == 0)
             {
                 Random r = new Random();
                 int psCount = context.ProgrammeStages.Max(ps => ps.Id);

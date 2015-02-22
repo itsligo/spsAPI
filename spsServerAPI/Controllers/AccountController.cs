@@ -431,17 +431,43 @@ namespace spsServerAPI.Controllers
         }
 
         
-        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
-        [Authorize(Roles="admin")]
-        [Route("GetUnauthorised")]
-        public dynamic GetUnauthorised()
+        //[HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        //[Authorize(Roles="admin")]
+        [AllowAnonymous]
+        [Route("GetUnApproved")]
+        public dynamic GetUnApproved()
         {
-            IDbSet<ApplicationUser> unApproved = autDb.Users;
+            ApprovalList retList = new ApprovalList();
+            retList.ForApprovalList = new List<forApproval>();
+            //IDbSet<ApplicationUser> unApproved = autDb.Users;
+            foreach (ApplicationUser user in autDb.Users)
+                if (user.Approved == false)
+                    retList.ForApprovalList.Add(
+                        new forApproval { SID = user.UserName, Approved = user.Approved });
+                        
+            return retList;
+        }
 
-                foreach (ApplicationUser user in autDb.Users)
-                    if (user.Approved == false)
-                        unApproved.Add(user);
-            return unApproved;
+        [HttpPut]
+        [Route("ApproveStudents")]
+        [AllowAnonymous]
+        public dynamic ApproveStudents(ApprovalList studentsForApproval )
+        {
+            string studentRole =  autDb.Roles.SingleOrDefaultAsync(r => r.Name == "student").Result.Id;
+            
+            foreach(forApproval usertoApprove in studentsForApproval.ForApprovalList)
+            {
+                var user = autDb.Users.SingleOrDefaultAsync(
+                    u => u.UserName == usertoApprove.SID && u.Approved == false).Result;
+                if (user != null & usertoApprove.Approved)
+                {
+                    user.Approved = true;
+                    user.Roles.Clear();
+                    user.Roles.Add(new ApplicationUserRole {UserId=user.Id, RoleId = studentRole });
+                }
+            }
+            autDb.SaveChanges();
+            return Ok();
         }
 
         // POST api/Account/RegisterExternal

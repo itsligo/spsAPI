@@ -24,6 +24,7 @@ namespace spsServerAPI.Models
         public virtual DbSet<StudentProgrammeStage> StudentProgrammeStages { get; set; }
         public virtual DbSet<Tutor> Tutors { get; set; }
         public virtual DbSet<TutorVisit> TutorVisits { get; set; }
+        public virtual DbSet<Placed> PlacedStudents { get; set; }
         //// The following are to be dropped from the Database model
         //public virtual DbSet<AvailablePlacementsView> AvailablePlacementsViews { get; set; }
         //public virtual DbSet<PlacementProviderView> PlacementProviderViews { get; set; }
@@ -81,5 +82,7 @@ namespace spsServerAPI.Models
                 .WithOptional(e => e.Tutor)
                 .WillCascadeOnDelete();
         }
+
+        //public System.Data.Entity.DbSet<spsServerAPI.Models.Placed> Placeds { get; set; }
     }
 }

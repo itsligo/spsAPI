@@ -22,9 +22,69 @@ namespace spsServerAPI.Controllers
     {
         private Model db = new Model();
 
+
+        [Route("GetStudentsWithPreferencesForPlacement/PID/{pid:int}/Year/{year:int}")]
+        public dynamic GetStudentsWithPreferencesForPlacement(int pid, int year)
+        {
+
+            var ret = (from placed in db.StudentPlacements
+                       join p in db.Placements
+                       on placed.PlacementID equals p.PlacementID
+                       join s in db.Students
+                       on placed.SID equals s.SID
+                       join ap in db.AllowablePlacements
+                       on p.PlacementID equals ap.PlacementID
+                       join ps in db.ProgrammeStages
+                       on ap.ProgrammeStageID equals ps.Id
+                       join sProg in db.StudentProgrammeStages
+                       on ps.Id equals sProg.ProgrammeStageID 
+                       where placed.PlacementID== pid && sProg.Year == year
+                       select new
+                       {
+                           SID = placed.SID,
+                           Name = String.Concat(new string[] { s.FirstName, " ", s.SecondName }),
+                           Pref = placed.Preference,
+                           Prog = String.Concat(new string[] { ps.ProgrammeCode, " Stage ", ps.Stage.ToString() }),
+                           PlcDesc = p.PlacementDescription
+                       }
+                           );
+
+            return ret;
+        }
+
+        [Route("GetStudentsWithNoPreferences/PID/{pid:int}/Year/{year:int}")]
+        public dynamic GetStudentsWithNoPreferences(int pid, int year)
+        {
+
+            var ret = (from placed in db.StudentPlacements
+                       join p in db.Placements
+                       on placed.PlacementID equals p.PlacementID
+                       join s in db.Students
+                       on placed.SID equals s.SID
+                       join ap in db.AllowablePlacements
+                       on p.PlacementID equals ap.PlacementID
+                       join ps in db.ProgrammeStages
+                       on ap.ProgrammeStageID equals ps.Id
+                       join sProg in db.StudentProgrammeStages
+                       on ps.Id equals sProg.ProgrammeStageID
+                       where placed.PlacementID == pid && sProg.Year == year
+                       where !(from innersp in db.StudentPlacements
+                                   select innersp.SID).Contains(s.SID) 
+                       select new
+                       {
+                           SID = placed.SID,
+                           Name = String.Concat(new string[] { s.FirstName, " ", s.SecondName }),
+                           Pref = 99,
+                           Prog = String.Concat(new string[] { ps.ProgrammeCode, " Stage ", ps.Stage.ToString() }),
+                           PlcDesc = p.PlacementDescription
+                       }
+                           );
+
+            return ret;
+        }
+
         // GET: api/StudentPlacements
         [Route("GetStudentPlacements")]        
-
         public IQueryable<StudentPlacement> GetStudentPlacements()
         {
             return db.StudentPlacements;
@@ -233,9 +293,19 @@ namespace spsServerAPI.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-
-
-
+        [HttpPut]
+        [Route("AssignStudentToPlacement/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/PID/{pid:int}/Pref/{pref:int}")]
+        public dynamic AssignStudentToPlacement(string sid, int pid)
+        {
+            var aleardyThere = db.StudentPlacements.SingleOrDefault(sp => sp.SID == sid);
+            if (aleardyThere != null)
+                return Duplicate("Student is already placed");
+            else
+            {
+                
+            }
+            return Ok();
+        }
         // POST: api/StudentPlacements
         [ResponseType(typeof(StudentPlacement))]
         [Route("PostStudentPlacement")]
@@ -314,6 +384,11 @@ namespace spsServerAPI.Controllers
         protected HttpResponseException BadRequest(string reason)
         {
             return CreateHttpResponseException(reason, HttpStatusCode.BadRequest);
+        }
+
+        protected HttpResponseException Duplicate(string reason)
+        {
+            return CreateHttpResponseException(reason, HttpStatusCode.Forbidden);
         }
 
         protected HttpResponseException NoContent(string reason)

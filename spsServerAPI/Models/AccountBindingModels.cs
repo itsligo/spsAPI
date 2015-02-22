@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace spsServerAPI.Models
 {
     // Models used as parameters to AccountController actions.
 
     public class AddExternalLoginBindingModel
-    {
+    {   
         [Required]
         [Display(Name = "External access token")]
         public string ExternalAccessToken { get; set; }
@@ -30,6 +31,17 @@ namespace spsServerAPI.Models
         [Display(Name = "Confirm new password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+    }
+
+    public class forApproval
+    {
+        public string SID { get; set; }
+        public bool Approved { get; set; }
+    }
+
+    public class ApprovalList
+    {
+        public List<forApproval> ForApprovalList { get; set; }
     }
 
     public class RegisterBindingModel
