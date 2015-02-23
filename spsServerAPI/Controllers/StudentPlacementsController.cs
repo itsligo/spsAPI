@@ -144,11 +144,11 @@ namespace spsServerAPI.Controllers
 
         }
 
-        //get: GetStudentPlacementByStudentID
+        //get: GetStudentPlacementByStudentIDandYear
         [ResponseType(typeof(List<StudentPlacement>))]
-        [Route("GetStudentPlacementByStudentID/SID/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/Year/{year:int}")]
+        [Route("GetStudentPlacementByStudentIDandYear/SID/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/Year/{year:int}")]
 
-        public dynamic GetStudentPlacementByStudentID(string id, int year)
+        public dynamic GetStudentPlacementByStudentIDandYear(string id, int year)
         {
             var studentPlacements = db.StudentPlacements
                                         .Include("Placement")
@@ -202,6 +202,7 @@ namespace spsServerAPI.Controllers
                 .Select(a => new
                 {
                     SPID = a.sp2.SPID,
+                    SID = a.sp2.SID,
                     PlacementID = a.sp2.PlacementID,
                     Preference = a.sp2.Preference,
                     Status = a.sp2.Status,
