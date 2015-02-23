@@ -209,7 +209,7 @@ namespace spsServerAPI.Database.spsMigrations
                         foreach (AllowablePlacement ap in allowableplacements)
                         {
                             // only allowing upto 3 preferenced placements
-                           if(preference++ < 4)
+                           if(++preference < 4)
                            {
                                s.StudentPlacements.Add(new StudentPlacement
                                {

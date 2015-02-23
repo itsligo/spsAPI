@@ -26,8 +26,8 @@ namespace spsServerAPI.Controllers
             return db.PlacedStudents.Where(p => p.Year == year);
         }
 
-        [Route("GetStudentPlaced/PID/{pid:int}/Year/{year:int}")]
-        public dynamic GetStudentPlaced(int pid, int year)
+        [Route("GetStudentPlaced/PID/{pid:int}")]
+        public dynamic GetStudentPlaced(int pid)
         {
 
             var ret = (from placed in db.PlacedStudents
@@ -35,20 +35,20 @@ namespace spsServerAPI.Controllers
                        on placed.PID equals p.PlacementID
                        join s in db.Students
                        on placed.SID equals s.SID
-                       join ap in db.AllowablePlacements
-                       on p.PlacementID equals ap.PlacementID
-                       join ps in db.ProgrammeStages
-                       on ap.ProgrammeStageID equals ps.Id
-                       where placed.PID == pid && placed.Year == p.StartDate.Value.Year
+                       join sprog in db.StudentProgrammeStages
+                       on s.SID equals sprog.SID
+                       join progStage in db.ProgrammeStages
+                       on sprog.ProgrammeStageID equals progStage.Id
+                       where placed.PID == pid 
                        select new 
                        {
                        SID = placed.SID,
                        Name = String.Concat(new string[] {s.FirstName," ",s.SecondName}),
                        Pref = 0,
-                       Prog = String.Concat(new string[] { ps.ProgrammeCode, " Stage ", ps.Stage.ToString() }),
+                       Prog = String.Concat(new string[] { progStage.ProgrammeCode, " Stage ", progStage.Stage.ToString() }),
                        PlcDesc = p.PlacementDescription
                        }
-                           );
+                           ).Distinct();
 
             return ret;
         }
@@ -58,6 +58,14 @@ namespace spsServerAPI.Controllers
         [Route("PostPlaced")]
         public dynamic PostPlaced(Placed placed)
         {
+            // This will need to be done using constraints;
+            var placement = db.Placements.Find(placed.PID);
+            var student = db.Students.Find(placed.SID);
+            if(student == null)
+                return BadRequest("Student ID " + placed.SID + " does not exist ");
+            if (placement == null)
+                return BadRequest("Placement ID" + placed.PID+ " does not exist ");
+
             if (placed.Year == null)
                 placed.Year = DateTime.Now.Year;
 
@@ -67,6 +75,7 @@ namespace spsServerAPI.Controllers
             }
 
             db.PlacedStudents.Add(placed);
+            placement.Filled = true;
 
             try
             {

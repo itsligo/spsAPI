@@ -83,7 +83,6 @@ namespace spsServerAPI.Models
                 .WillCascadeOnDelete();
 
 
-
         }
 
         //public System.Data.Entity.DbSet<spsServerAPI.Models.Placed> Placeds { get; set; }

@@ -395,6 +395,7 @@ namespace spsServerAPI.Controllers
                     return BadRequest("No login account found for " + student.SID);
                 // should cascade deletes of roles as well
                 autDb.Users.Remove(user);
+                await autDb.SaveChangesAsync();
             }
             return Ok(student);
         }

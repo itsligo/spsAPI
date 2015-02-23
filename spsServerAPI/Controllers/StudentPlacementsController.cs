@@ -23,74 +23,60 @@ namespace spsServerAPI.Controllers
         private Model db = new Model();
 
 
-        [Route("GetAllStudentsWtihOrWithOutPlacement/PID/{pid:int}/Year/{year:int}")]
-        public dynamic GetAllStudentsWtihOrWithOutPlacement(int pid, int year)
-        {
-            var retWith = GetStudentsWithPreferencesForPlacement(pid, year);
-            var retWithOut = GetStudentsWithPreferencesForPlacement(pid, year);
-
-            return Ok();
-
-            
-        }
-        [Route("GetStudentsWithPreferencesForPlacement/PID/{pid:int}/Year/{year:int}")]
-        public dynamic GetStudentsWithPreferencesForPlacement(int pid, int year)
+        [Route("GetStudentsWithPreferencesForPlacement/PID/{pid:int}")]
+        public dynamic GetStudentsWithPreferencesForPlacement(int pid)
         {
 
-            var ret = (from placed in db.StudentPlacements
-                       join p in db.Placements
-                       on placed.PlacementID equals p.PlacementID
-                       join s in db.Students
-                       on placed.SID equals s.SID
-                       join ap in db.AllowablePlacements
-                       on p.PlacementID equals ap.PlacementID
-                       join ps in db.ProgrammeStages
-                       on ap.ProgrammeStageID equals ps.Id
-                       join sProg in db.StudentProgrammeStages
-                       on ps.Id equals sProg.ProgrammeStageID 
-                       where placed.PlacementID== pid && sProg.Year == year
+            var ret = ( from s in db.Students
+                        join preferenced in db.StudentPlacements
+                        on s.SID equals preferenced.SID
+                        join sprog in db.StudentProgrammeStages
+                        on s.SID equals sprog.SID
+                        join progStage in db.ProgrammeStages
+                        on sprog.ProgrammeStageID equals progStage.Id
+                        join p in db.Placements
+                        on preferenced.PlacementID equals p.PlacementID
+                       where preferenced.PlacementID== pid 
                        select new
                        {
-                           SID = placed.SID,
+                           SID = s.SID,
                            Name = String.Concat(new string[] { s.FirstName, " ", s.SecondName }),
-                           Pref = placed.Preference,
-                           Prog = String.Concat(new string[] { ps.ProgrammeCode, " Stage ", ps.Stage.ToString() }),
+                           Pref = preferenced.Preference,
+                           Prog = String.Concat(new string[] { progStage.ProgrammeCode, " Stage ", progStage.Stage.ToString() }),
                            PlcDesc = p.PlacementDescription
                        }
-                           );
+                           ).Distinct();
 
             return ret;
         }
 
-        [Route("GetStudentsWithNoPreferences/PID/{pid:int}/Year/{year:int}")]
-        public dynamic GetStudentsWithNoPreferences(int pid, int year)
+        [Route("GetStudentsWithNoPreferences/PID/{pid:int}")]
+        public dynamic GetStudentsWithNoPreferences(int pid)
         {
+            // This works but the join would be mad for the output
+            
+            
+            
+            var placedIds = db.PlacedStudents.Select( x => x.SID);
+            var nonPlaced = db.Students.Where(s => !placedIds.Contains(s.SID)).Select(s => s.SID);
+            var studentsWithPlacements = db.StudentPlacements.Select(s => s.SID).Distinct();
+            var others = nonPlaced.Except(studentsWithPlacements);
+            
 
-            var ret = (from placed in db.StudentPlacements
-                       join p in db.Placements
-                       on placed.PlacementID equals p.PlacementID
-                       join s in db.Students
-                       on placed.SID equals s.SID
-                       join ap in db.AllowablePlacements
-                       on p.PlacementID equals ap.PlacementID
-                       join ps in db.ProgrammeStages
-                       on ap.ProgrammeStageID equals ps.Id
-                       join sProg in db.StudentProgrammeStages
-                       on ps.Id equals sProg.ProgrammeStageID
-                       where placed.PlacementID == pid && sProg.Year == year
-                       where !(from innersp in db.StudentPlacements
-                                   select innersp.SID).Contains(s.SID) 
-                       select new
-                       {
-                           SID = placed.SID,
-                           Name = String.Concat(new string[] { s.FirstName, " ", s.SecondName }),
-                           Pref = 99,
-                           Prog = String.Concat(new string[] { ps.ProgrammeCode, " Stage ", ps.Stage.ToString() }),
-                           PlcDesc = p.PlacementDescription
-                       }
-                           );
+            var result = db.Students.Where(s => others.Contains(s.SID))
+                 .Join(db.StudentProgrammeStages, sp2 => sp2.SID, sps => sps.SID,
+                 (sp2, sps) => new { sp2, sps })
+                 .Join(db.ProgrammeStages, ps => ps.sps.ProgrammeStageID, prog => prog.Id,
+                 (sp3, prog) => new { sp3, prog })
+                 .Select(a => new
+                 {
+                     SID = a.sp3.sp2.SID,
+                     Name = String.Concat(a.sp3.sp2.FirstName , " " , a.sp3.sp2.SecondName),
+                     Pref = 99,
+                     Prog = String.Concat(a.prog.ProgrammeCode, " stage ", a.prog.Stage.ToString())
 
-            return ret.ToList();
+                 });
+            return result;
         }
 
         // GET: api/StudentPlacements
