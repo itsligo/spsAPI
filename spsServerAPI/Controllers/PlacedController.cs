@@ -20,7 +20,7 @@ namespace spsServerAPI.Controllers
     {
         Model db = new Model();
 
-        [Route("GetPlaced/{year:int}")]
+        [Route("GetPlaced")]
         public dynamic GetPlaced(int year)
         {
             return db.PlacedStudents.Where(p => p.Year == year);
@@ -55,25 +55,18 @@ namespace spsServerAPI.Controllers
 
 
         [HttpPost]
-        [Route("PostPlaced")]
-        public dynamic PostPlaced(Placed placed)
+        [Route("PostPlaced/PID/{pid:int}/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
+        public dynamic PostPlaced(int pid, string sid)
         {
             // This will need to be done using constraints;
-            var placement = db.Placements.Find(placed.PID);
-            var student = db.Students.Find(placed.SID);
+            var placement = db.Placements.Find(pid);
+            var student = db.Students.Find(sid);
             if(student == null)
-                return BadRequest("Student ID " + placed.SID + " does not exist ");
+                return BadRequest("Student ID " + sid + " does not exist to be placed");
             if (placement == null)
-                return BadRequest("Placement ID" + placed.PID+ " does not exist ");
+                return BadRequest("Placement ID" + pid.ToString() + " does not exist ");
 
-            if (placed.Year == null)
-                placed.Year = DateTime.Now.Year;
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
+            Placed placed = new Placed { PID = pid, SID = sid };
             db.PlacedStudents.Add(placed);
             placement.Filled = true;
 
@@ -85,7 +78,7 @@ namespace spsServerAPI.Controllers
             {
                 if (PlacedExists(placed))
                 {
-                   return Conflict();
+                    return Conflict();
                 }
                 else
                 {
@@ -97,26 +90,28 @@ namespace spsServerAPI.Controllers
 
         }
 
+        
         [ResponseType(typeof(Placed))]
-        [Route("DeletePlaced/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/PID/{pid:int}/Year/{year:int}")]
-        public async Task<IHttpActionResult> DeletePlaced(string sid, int pid, int year)
+        [HttpDelete]
+        [Route("DeletePlaced/PID/{pid:int}")]
+        public async Task<IHttpActionResult> DeletePlaced(int pid)
         {
             Placed placed = db.PlacedStudents
-                .SingleOrDefault(e => e.SID == sid && e.PID == pid && e.Year == year);
+                .SingleOrDefault(e => e.PID == pid );
             if (placed == null)
+            {
+                return BadRequest("No Record to delete for " + pid.ToString());
+            }
+             //this is probably redundant now but for cosistancy
+
+            Placement placement = db.Placements
+                .SingleOrDefault(e => e.PlacementID == pid );
+            
+            if(placement == null)
             {
                 return NotFound();
             }
-            // this is probably redundant now but for cosistancy
-            //Placement placement = db.Placements
-            //    .SingleOrDefault(e => e.PlacementID == pid 
-            //        && e.StartDate.Value.Year == year);
-            
-            //if(placement == null)
-            //{
-            //    return NotFound();
-            //}
-            //placement.Filled = true;
+            placement.Filled = false;
 
             db.PlacedStudents.Remove(placed);
             await db.SaveChangesAsync();
@@ -127,7 +122,7 @@ namespace spsServerAPI.Controllers
         private bool PlacedExists(Placed p)
         {
             return db.PlacedStudents.Count(
-                e => e.SID == p.SID && e.PID == p.PID && e.Year == p.Year) > 0;
+                e => e.PID == p.PID ) > 0;
  
         }
     }

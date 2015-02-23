@@ -198,7 +198,7 @@ namespace spsServerAPI.Controllers
                             {
                                 id = p.Year,
                                 year = p.Year
-                            }).Distinct();
+                            }).Distinct().OrderByDescending(a => a.id);
             return yearList;
         }
 

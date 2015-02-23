@@ -30,10 +30,26 @@ namespace spsServerAPI.Controllers
         }
 
         [Route("GetPlacementsByYear/{year:int}")]
-        public dynamic GetPlacements(int year)
+        public dynamic GetPlacementsByYear(int year)
         {
-            var returned = db.Placements.Include("AllowablePlacements")
+            var returned = db.Placements
+                .Include("PlacementProvider")
+                .Include("AllowablePlacements")
                 .Where(p => p.StartDate.Value.Year == year);
+
+            //var returned = db.Placements.Include("PlacementProvider").Include("AllowablePlacements")
+            //    .Where(p => p.StartDate.Value.Year == year)
+            //    .Select(a => new
+            //    {
+            //        a.PlacementID,
+            //        a.PlacementDescription,
+            //        a.StartDate,
+            //        a.FinishDate,
+            //        a.UseBaseAddress,
+            //        a.AllowablePlacements,
+            //        a.PlacementProvider.ProviderName,
+            //    });
+                
             return returned;
         }
 
@@ -87,7 +103,7 @@ namespace spsServerAPI.Controllers
                                 {
                                     id = p.StartDate.Value.Year,
                                     year = p.StartDate.Value.Year
-                                }).Distinct();
+                                }).Distinct().OrderByDescending(a => a.id);
                 // if no placements then just return the current year
                 // as no year causes an error on the client
                 if(yearList.Count() == 0)

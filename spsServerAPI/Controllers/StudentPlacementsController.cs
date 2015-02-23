@@ -53,12 +53,8 @@ namespace spsServerAPI.Controllers
         [Route("GetStudentsWithNoPreferences/PID/{pid:int}")]
         public dynamic GetStudentsWithNoPreferences(int pid)
         {
-            // This works but the join would be mad for the output
-            
-            
-            
             var placedIds = db.PlacedStudents.Select( x => x.SID);
-            var nonPlaced = db.Students.Where(s => !placedIds.Contains(s.SID)).Select(s => s.SID);
+            var nonPlaced = db.Students.Where(s => !placedIds.Contains(s.SID)).Select(s => s.SID).Distinct();
             var studentsWithPlacements = db.StudentPlacements.Select(s => s.SID).Distinct();
             var others = nonPlaced.Except(studentsWithPlacements);
             
@@ -74,7 +70,6 @@ namespace spsServerAPI.Controllers
                      Name = String.Concat(a.sp3.sp2.FirstName , " " , a.sp3.sp2.SecondName),
                      Pref = 99,
                      Prog = String.Concat(a.prog.ProgrammeCode, " stage ", a.prog.Stage.ToString())
-
                  });
             return result;
         }
@@ -200,14 +195,24 @@ namespace spsServerAPI.Controllers
         [Route("GetStudentPlacementsByPlacementId/{id:int}")]
         public dynamic GetStudentPlacementsByPlacementId(int id)
         {
-            var studentPlacements = db.StudentPlacements
-                .Where(sp => sp.PlacementID == id);
-            if (studentPlacements.Count() == 0)
+            var studentPlacementWithNames = db.StudentPlacements
+                .Join(db.Students, sp => sp.SID, s => s.SID,
+                (sp2, sps) => new { sp2, sps })
+                .Where(sp => sp.sp2.PlacementID == id)
+                .Select(a => new
+                {
+                    SPID = a.sp2.SPID,
+                    PlacementID = a.sp2.PlacementID,
+                    Preference = a.sp2.Preference,
+                    Status = a.sp2.Status,
+                    Name = String.Concat(a.sps.FirstName, " ", a.sps.SecondName),
+                });
+            if (studentPlacementWithNames.Count() == 0)
             {
-                string message = "No Student Placement for PID " + id.ToString();
+                string message = "No Student Placements for PID " + id.ToString();
                 return NotFound(message);
             }
-            return Ok(studentPlacements);
+            return Ok(studentPlacementWithNames);
         }
         // GET: api/StudentPlacements/5
         [ResponseType(typeof(StudentPlacement))]
