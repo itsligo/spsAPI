@@ -46,8 +46,11 @@ namespace spsServerAPI.Controllers
                            PlcDesc = p.PlacementDescription
                        }
                            ).Distinct();
+            
+            var placedIds = db.PlacedStudents.Select(x => x.SID);
+            var others = ret.Where(a => !placedIds.Contains(a.SID));
 
-            return ret;
+            return others;
         }
 
         [Route("GetStudentsWithNoPreferences/PID/{pid:int}")]
