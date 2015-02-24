@@ -61,10 +61,14 @@ namespace spsServerAPI.Controllers
             // This will need to be done using constraints;
             var placement = db.Placements.Find(pid);
             var student = db.Students.Find(sid);
+            var exists = db.PlacedStudents.Where(p => p.SID == sid);
+
             if(student == null)
                 return BadRequest("Student ID " + sid + " does not exist to be placed");
             if (placement == null)
                 return BadRequest("Placement ID" + pid.ToString() + " does not exist ");
+            if (exists.Count() > 0)
+                return BadRequest("Student ID" + sid.ToString() + " already placed ");
 
             Placed placed = new Placed { PID = pid, SID = sid };
             db.PlacedStudents.Add(placed);

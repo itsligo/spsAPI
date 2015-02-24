@@ -385,18 +385,29 @@ namespace spsServerAPI.Controllers
                 return NotFound();
             }
 
-            db.Students.Remove(student);
-            await db.SaveChangesAsync();
-            using (ApplicationDbContext autDb = new ApplicationDbContext())
+            try
             {
-                ApplicationUser user = await autDb.Users
-                    .FirstOrDefaultAsync(s => s.UserName == student.SID);
-                if(user == null)
-                    return BadRequest("No login account found for " + student.SID);
-                // should cascade deletes of roles as well
-                autDb.Users.Remove(user);
-                await autDb.SaveChangesAsync();
+                using (ApplicationDbContext autDb = new ApplicationDbContext())
+                {
+                    ApplicationUser user = await autDb.Users
+                        .FirstOrDefaultAsync(s => s.UserName == student.SID);
+                    if (user == null)
+                        return BadRequest("No login account found for " + student.SID);
+                    // should cascade deletes of roles as well
+                    autDb.Users.Remove(user);
+                    await autDb.SaveChangesAsync();
+
+                }
+                db.Students.Remove(student);
+                await db.SaveChangesAsync();
             }
+
+            catch (System.Data.Entity.Validation.DbEntityValidationException e)
+            {
+                return BadRequest("Error Deleting Student " + e.Message);
+            }
+
+
             return Ok(student);
         }
 

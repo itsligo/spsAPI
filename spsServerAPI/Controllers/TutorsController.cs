@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using spsServerAPI.Models;
 using System.Web.Http.Cors;
+using Microsoft.AspNet.Identity;
 
 namespace spsServerAPI.Controllers
 {
@@ -26,7 +27,7 @@ namespace spsServerAPI.Controllers
         [Route("GetTutors")]
         public dynamic GetTutors()
         {
-            return db.Tutors.Select(t => new 
+            return db.Tutors.Select(t => new
             {
                 t.TutorID,
                 t.FirstName,
@@ -49,7 +50,7 @@ namespace spsServerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(db.Tutors.Where(t => t.TutorID == id).Select(t => new 
+            return Ok(db.Tutors.Where(t => t.TutorID == id).Select(t => new
             {
                 t.TutorID,
                 t.FirstName,
@@ -70,13 +71,14 @@ namespace spsServerAPI.Controllers
 
             return Ok(db.Tutors.Include("TutorVisit")
                 .Where(t => t.TutorID == id)
-                .Select(t => new 
+                .Select(t => new
                     {
                         t.TutorID,
                         t.FirstName,
                         t.SecondName,
-                        Visits = t.TutorVisits.Select(visits 
-                            => new {
+                        Visits = t.TutorVisits.Select(visits
+                            => new
+                            {
                                 visits.VisitID,
                                 visits.DateVisited,
                                 visits.Comment
@@ -94,28 +96,29 @@ namespace spsServerAPI.Controllers
             }
 
             var tutorView = (from t in db.Tutors
-                            join sp in db.StudentPlacements
-                             on t.TutorID equals sp.TutorID
+                             join sp in db.StudentPlacements
+                              on t.TutorID equals sp.TutorID
                              join p in db.Placements
                              on sp.PlacementID equals p.PlacementID
                              join pp in db.PlacementProviders
                              on p.ProviderID equals pp.ProviderID
                              where t.TutorID == id
-                             select new {
-                                        t.TutorID,
-                                        t.FirstName,
-                                        t.SecondName,
-                                        sp.SID,
-                                        p.PlacementID,
-                                        p.StartDate,
-                                        p.FinishDate,
-                                        pp.ProviderDescription,
-                                        pp.AddressLine1,
-                                        pp.AddressLine2,
-                                        pp.County,
-                                        pp.City,
-                                        pp.ContactNumber
-                                        }
+                             select new
+                             {
+                                 t.TutorID,
+                                 t.FirstName,
+                                 t.SecondName,
+                                 sp.SID,
+                                 p.PlacementID,
+                                 p.StartDate,
+                                 p.FinishDate,
+                                 pp.ProviderDescription,
+                                 pp.AddressLine1,
+                                 pp.AddressLine2,
+                                 pp.County,
+                                 pp.City,
+                                 pp.ContactNumber
+                             }
                              );
 
             return Ok(tutorView);
@@ -201,9 +204,14 @@ namespace spsServerAPI.Controllers
 
             try
             {
+                // to create an account for this tutor
+                bool success = await MakeTutorAccount(tutor);
+                if (!success)
+                {
+                    return BadRequest("Error Adding User login while adding Tutor " );
+                }
                 await db.SaveChangesAsync();
-                //AccountController accMan = new AccountController();
-                //await accMan.Register(new RegisterBindingModel { Fname = tutor.FirstName });
+
             }
             catch (DbUpdateException)
             {
@@ -231,8 +239,27 @@ namespace spsServerAPI.Controllers
                 return NotFound();
             }
 
-            db.Tutors.Remove(tutor);
-            await db.SaveChangesAsync();
+            try
+            {
+                using (ApplicationDbContext autDb = new ApplicationDbContext())
+                {
+                    ApplicationUser user = await autDb.Users
+                        .FirstOrDefaultAsync(s => s.UserName == tutor.Email);
+                    if (user == null)
+                        return BadRequest("No login account found for " + tutor.Email);
+                    // should cascade deletes of roles as well
+                    autDb.Users.Remove(user);
+                    await autDb.SaveChangesAsync();
+
+                }
+                db.Tutors.Remove(tutor);
+                await db.SaveChangesAsync();
+            }
+
+            catch (System.Data.Entity.Validation.DbEntityValidationException e)
+            {
+                return BadRequest("Error Deleting Tutor " + e.Message);
+            }
 
             return Ok(tutor);
         }
@@ -249,6 +276,44 @@ namespace spsServerAPI.Controllers
         private bool TutorExists(int id)
         {
             return db.Tutors.Count(e => e.TutorID == id) > 0;
+        }
+
+        private async Task<bool> MakeTutorAccount(Tutor t)
+        {
+            using (ApplicationDbContext autDb = new ApplicationDbContext())
+            {
+                var exists = await autDb.Users.SingleOrDefaultAsync(
+                    s => s.UserName == t.Email);
+                if (exists == null)
+                {
+                    ApplicationRole role = await autDb.Roles.FirstOrDefaultAsync(
+                        r => r.Name == "tutor");
+                    PasswordHasher p = new PasswordHasher();
+                    var user = new ApplicationUser()
+                    {
+                        FirstName = t.FirstName,
+                        SecondName = t.SecondName,
+                        UserName = t.Email,
+                        Email = t.Email,
+                        Approved = true,
+                        PasswordHash = p.HashPassword(t.Email),
+                    };
+                    autDb.Users.Add(user);
+                    user.Roles.Add(new ApplicationUserRole { RoleId = role.Id });
+                    try
+                    {
+                        await autDb.SaveChangesAsync();
+                    }
+                    catch (System.Data.Entity.Validation.DbEntityValidationException)
+                    {
+                        
+                        return false;
+                    }
+
+                }
+
+            }
+            return true;
         }
     }
 }
