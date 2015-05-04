@@ -12,17 +12,19 @@ namespace spsServerAPI.Models
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [ForeignKey("placement")]
         public int PlacementID { get; set; }
 
         [Key]
         [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [ForeignKey("programmeStage")]
         public int ProgrammeStageID { get; set; }
 
         public string Comment { get; set; }
 
-        public virtual Placement Placement { get; set; }
+        public virtual Placement placement { get; set; }
 
-        public virtual ProgrammeStage ProgrammeStage { get; set; }
+        public virtual ProgrammeStage programmeStage { get; set; }
     }
 }

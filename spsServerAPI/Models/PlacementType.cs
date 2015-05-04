@@ -11,7 +11,7 @@ namespace spsServerAPI.Models
     {
         public PlacementType()
         {
-            Placements = new HashSet<Placement>();
+            //placements = new HashSet<Placement>();
         }
 
         [Key]
@@ -20,6 +20,6 @@ namespace spsServerAPI.Models
 
         public string Description { get; set; }
 
-        public virtual ICollection<Placement> Placements { get; set; }
+        //public virtual ICollection<Placement> placements { get; set; }
     }
 }

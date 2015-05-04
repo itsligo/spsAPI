@@ -12,17 +12,18 @@ namespace spsServerAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int VisitID { get; set; }
 
-        public int? TutorID { get; set; }
-
-        public int? SPID { get; set; }
+        public int TutorID { get; set; }
+        [ForeignKey("assignedPlacement")]
+        public int PlacementID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DateVisited { get; set; }
+        public DateTime DateVisited { get; set; }
 
         public string Comment { get; set; }
 
-        public virtual StudentPlacement StudentPlacement { get; set; }
+        public virtual Placement assignedPlacement { get; set; }
+        //public virtual Placed placed { get; set; }
 
-        public virtual Tutor Tutor { get; set; }
+        public virtual Tutor tutor { get; set; }
     }
 }

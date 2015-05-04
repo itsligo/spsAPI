@@ -237,7 +237,6 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\importController.cs" />
-    <Compile Include="Controllers\PlacedController.cs" />
     <Compile Include="Controllers\PlacementProvidersController.cs" />
     <Compile Include="Controllers\PlacementsController.cs" />
     <Compile Include="Controllers\PlacementTypesController.cs" />
@@ -247,21 +246,9 @@
     <Compile Include="Controllers\StudentsController.cs" />
     <Compile Include="Controllers\TutorsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="Database\spsMigrations\201501021505107_initial.cs" />
-    <Compile Include="Database\spsMigrations\201501021505107_initial.Designer.cs">
-      <DependentUpon>201501021505107_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.cs" />
-    <Compile Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.Designer.cs">
-      <DependentUpon>201502111233111_ChangeProgrammeStageYearToInt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Database\spsMigrations\201502202336397_tutorEmailAdded.cs" />
-    <Compile Include="Database\spsMigrations\201502202336397_tutorEmailAdded.Designer.cs">
-      <DependentUpon>201502202336397_tutorEmailAdded.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Database\spsMigrations\201502221755504_PlacedTableIntroduced.cs" />
-    <Compile Include="Database\spsMigrations\201502221755504_PlacedTableIntroduced.Designer.cs">
-      <DependentUpon>201502221755504_PlacedTableIntroduced.cs</DependentUpon>
+    <Compile Include="Database\spsMigrations\201504151244074_ReInitial Migration.cs" />
+    <Compile Include="Database\spsMigrations\201504151244074_ReInitial Migration.Designer.cs">
+      <DependentUpon>201504151244074_ReInitial Migration.cs</DependentUpon>
     </Compile>
     <Compile Include="Database\spsMigrations\Configuration.cs" />
     <Compile Include="Database\UserManagementMigrations\201501021456049_initial.cs" />
@@ -281,7 +268,6 @@
     <Compile Include="Models\Enum.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Model.cs" />
-    <Compile Include="Models\Placed.cs" />
     <Compile Include="Models\Placement.cs" />
     <Compile Include="Models\PlacementProvider.cs" />
     <Compile Include="Models\PlacementSupervisor.cs" />
@@ -290,7 +276,7 @@
     <Compile Include="Models\ProgrammeStage.cs" />
     <Compile Include="Models\RefreshToken.cs" />
     <Compile Include="Models\Student.cs" />
-    <Compile Include="Models\StudentPlacement.cs" />
+    <Compile Include="Models\StudentPreferences.cs" />
     <Compile Include="Models\StudentProgrammeStage.cs" />
     <Compile Include="Models\Tutor.cs" />
     <Compile Include="Models\TutorVisit.cs" />
@@ -333,7 +319,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <Content Include="Database\spsClasses.cd" />
     <None Include="Properties\PublishProfiles\spsServerAPI.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -381,17 +366,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Database\spsMigrations\201501021505107_initial.resx">
-      <DependentUpon>201501021505107_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Database\spsMigrations\201502111233111_ChangeProgrammeStageYearToInt.resx">
-      <DependentUpon>201502111233111_ChangeProgrammeStageYearToInt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Database\spsMigrations\201502202336397_tutorEmailAdded.resx">
-      <DependentUpon>201502202336397_tutorEmailAdded.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Database\spsMigrations\201502221755504_PlacedTableIntroduced.resx">
-      <DependentUpon>201502221755504_PlacedTableIntroduced.cs</DependentUpon>
+    <EmbeddedResource Include="Database\spsMigrations\201504151244074_ReInitial Migration.resx">
+      <DependentUpon>201504151244074_ReInitial Migration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\UserManagementMigrations\201501021456049_initial.resx">
       <DependentUpon>201501021456049_initial.cs</DependentUpon>

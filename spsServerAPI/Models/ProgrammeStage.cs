@@ -11,23 +11,24 @@ namespace spsServerAPI.Models
     {
         public ProgrammeStage()
         {
-            AllowablePlacements = new HashSet<AllowablePlacement>();
-            StudentProgrammeStages = new HashSet<StudentProgrammeStage>();
+            allowablePlacements = new HashSet<AllowablePlacement>();
+            studentProgrammeStages = new HashSet<StudentProgrammeStage>();
         }
         
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [StringLength(50)]
+
+        [ForeignKey("programme")]
         public string ProgrammeCode { get; set; }
 
         public int? Stage { get; set; }
 
-        public virtual ICollection<AllowablePlacement> AllowablePlacements { get; set; }
+        public virtual ICollection<AllowablePlacement> allowablePlacements { get; set; }
 
-        public virtual Programme Programme { get; set; }
+        public virtual Programme programme { get; set; }
 
-        public virtual ICollection<StudentProgrammeStage> StudentProgrammeStages { get; set; }
+        public virtual ICollection<StudentProgrammeStage> studentProgrammeStages { get; set; }
     }
 }

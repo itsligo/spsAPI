@@ -76,7 +76,7 @@ namespace spsServerAPI.Controllers
                         t.TutorID,
                         t.FirstName,
                         t.SecondName,
-                        Visits = t.TutorVisits.Select(visits
+                        Visits = t.tutorVisits.Select(visits
                             => new
                             {
                                 visits.VisitID,
@@ -96,22 +96,22 @@ namespace spsServerAPI.Controllers
             }
 
             var tutorView = (from t in db.Tutors
-                             join sp in db.StudentPlacements
-                              on t.TutorID equals sp.TutorID
-                             join p in db.Placements
-                             on sp.PlacementID equals p.PlacementID
+                             join plc in db.Placements
+                              on t.TutorID equals plc.AssignedTutorID
+                             join p in db.StudentPreferences
+                             on plc.PlacementID equals p.PID
                              join pp in db.PlacementProviders
-                             on p.ProviderID equals pp.ProviderID
+                             on plc.ProviderID equals pp.ProviderID
                              where t.TutorID == id
                              select new
                              {
                                  t.TutorID,
                                  t.FirstName,
                                  t.SecondName,
-                                 sp.SID,
-                                 p.PlacementID,
-                                 p.StartDate,
-                                 p.FinishDate,
+                                 p.SID,
+                                 p.PID,
+                                 plc.StartDate,
+                                 plc.FinishDate,
                                  pp.ProviderDescription,
                                  pp.AddressLine1,
                                  pp.AddressLine2,
@@ -127,22 +127,22 @@ namespace spsServerAPI.Controllers
         [Route("GetTutorAssignedPlacementsForAdminView")]
         public async Task<IHttpActionResult> GetTutorAssignedPlacementsForAdminView()
         {
-            var tutorView = (from t in db.Tutors
-                             join sp in db.StudentPlacements
-                              on t.TutorID equals sp.TutorID
-                             join p in db.Placements
-                             on sp.PlacementID equals p.PlacementID
+            var tutorView  = (from t in db.Tutors
+                             join plc in db.Placements
+                              on t.TutorID equals plc.AssignedTutorID
+                             join p in db.StudentPreferences
+                             on plc.PlacementID equals p.PID
                              join pp in db.PlacementProviders
-                             on p.ProviderID equals pp.ProviderID
+                             on plc.ProviderID equals pp.ProviderID
                              select new
                              {
                                  t.TutorID,
                                  t.FirstName,
                                  t.SecondName,
-                                 sp.SID,
-                                 p.PlacementID,
-                                 p.StartDate,
-                                 p.FinishDate,
+                                 p.SID,
+                                 p.PID,
+                                 plc.StartDate,
+                                 plc.FinishDate,
                                  pp.ProviderDescription,
                                  pp.AddressLine1,
                                  pp.AddressLine2,
@@ -190,8 +190,11 @@ namespace spsServerAPI.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+
+
         // POST: api/Tutors
         [ResponseType(typeof(Tutor))]
+        [HttpPost]
         [Route("PostTutors")]
         public async Task<IHttpActionResult> PostTutor(Tutor tutor)
         {

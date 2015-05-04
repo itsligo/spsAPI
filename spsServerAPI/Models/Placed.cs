@@ -22,9 +22,23 @@ namespace spsServerAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string SID { get; set; }
 
-        public int Year { get; set; }
+        //[Key]
+        //public int PlacedId { get; set; }
 
-        public virtual Placement PlacedPlacement { get; set; }
-        public virtual Student PlacedStudent { get; set; }
+        //[ForeignKey("studentPreference")]
+        //public int StudentPrefernceID { get; set; }
+
+        
+        //public int? TutorID { get; set; }
+
+        //public int Year { get; set; }
+
+        //public virtual Placement PlacedPlacement { get; set; }
+        //public virtual StudentPreference studentPreference { get; set; }
+
+        //public virtual Tutor assignedTutor { get; set; }
+        //public virtual ICollection<TutorVisit> TutorVisits { get; set; }
+
+        
     }
 }

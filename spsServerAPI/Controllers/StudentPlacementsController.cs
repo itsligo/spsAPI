@@ -28,18 +28,18 @@ namespace spsServerAPI.Controllers
         {
 
             var ret = ( from s in db.Students
-                        join preferenced in db.StudentPlacements
+                        join preferenced in db.StudentPreferences
                         on s.SID equals preferenced.SID
                         join sprog in db.StudentProgrammeStages
-                        on s.SID equals sprog.SID
+                        on s.SID equals sprog.student.SID
                         join progStage in db.ProgrammeStages
                         on sprog.ProgrammeStageID equals progStage.Id
                         join p in db.Placements
-                        on preferenced.PlacementID equals p.PlacementID
-                       where preferenced.PlacementID== pid 
+                        on preferenced.PID equals p.PlacementID
+                       where preferenced.PID== pid 
                        select new
                        {
-                           SID = s.SID,
+                           SID = preferenced.SID,
                            Name = String.Concat(new string[] { s.FirstName, " ", s.SecondName }),
                            Pref = preferenced.Preference,
                            Prog = String.Concat(new string[] { progStage.ProgrammeCode, " Stage ", progStage.Stage.ToString() }),
@@ -47,8 +47,12 @@ namespace spsServerAPI.Controllers
                        }
                            ).Distinct();
             
-            var placedIds = db.PlacedStudents.Select(x => x.SID);
-            var others = ret.Where(a => !placedIds.Contains(a.SID));
+            //var placedIds = db.PlacedStudents
+            //    .Join(db.StudentPreferences,plc => plc.PID, pref => pref.PID,
+            //            (sp1,pref) => new {sp1,pref})
+            //    .Select(x => x.pref.SID);
+            var placed = new HashSet<string>(db.Placements.Select( x => x.AssignedStudentID));
+            var others = ret.Where(a => !placed.Contains(a.SID));
 
             return others;
         }
@@ -56,9 +60,14 @@ namespace spsServerAPI.Controllers
         [Route("GetStudentsWithNoPreferences/PID/{pid:int}")]
         public dynamic GetStudentsWithNoPreferences(int pid)
         {
-            var placedIds = db.PlacedStudents.Select( x => x.SID);
+            //var placedIds = db.PlacedStudents
+            //    .Join(db.StudentPreferences, plc => plc.PID, pref => pref.PID,
+            //            (sp1, pref) => new { sp1, pref })
+            //    .Select(x => x.sp1.SID);
+            var placedIds = new HashSet<string>(db.Placements.Select(x => x.AssignedStudentID));
+
             var nonPlaced = db.Students.Where(s => !placedIds.Contains(s.SID)).Select(s => s.SID).Distinct();
-            var studentsWithPlacements = db.StudentPlacements.Select(s => s.SID).Distinct();
+            var studentsWithPlacements = db.StudentPreferences.Select(s => s.SID).Distinct();
             var others = nonPlaced.Except(studentsWithPlacements);
             
 
@@ -79,24 +88,24 @@ namespace spsServerAPI.Controllers
 
         // GET: api/StudentPlacements
         [Route("GetStudentPlacements")]        
-        public IQueryable<StudentPlacement> GetStudentPlacements()
+        public IQueryable<StudentPreference> GetStudentPlacements()
         {
-            return db.StudentPlacements;
+            return db.StudentPreferences;
         }
 
         [Route("GetPreferencesByPlcId/PID/{pid:int}/Preference/{pref:int}")]
         public dynamic GetPreferencesByPlcId(int pid, int? pref)
         {
             var result = (from s in db.Students
-                          join sp in db.StudentPlacements
+                          join sp in db.StudentPreferences
                           on s.SID equals sp.SID
                           join p in db.Placements
-                          on sp.PlacementID equals p.PlacementID
+                          on sp.PID equals p.PlacementID
                           join sps in db.StudentProgrammeStages
                           on s.SID equals sps.SID
                           join ps in db.ProgrammeStages
                           on sps.ProgrammeStageID equals ps.Id
-                          where sp.PlacementID == pid
+                          where sp.PID == pid
                           && sp.Preference == pref
                           && p.StartDate.Value.Year == sps.Year
 
@@ -105,7 +114,7 @@ namespace spsServerAPI.Controllers
                               s.SID,
                               s.FirstName,
                               s.SecondName,
-                              sp.PlacementID,
+                              sp.PID,
                               sp.Status,
                               ps.ProgrammeCode,
                               ps.Stage,
@@ -124,15 +133,15 @@ namespace spsServerAPI.Controllers
         public dynamic GetPreferencesBySIDandYear(string sid, int year)
         {
             var result = (from s in db.Students
-                          join sp in db.StudentPlacements
+                          join sp in db.StudentPreferences
                           on s.SID equals sp.SID
                           join p in db.Placements
-                          on sp.PlacementID equals p.PlacementID
+                          on sp.PID equals p.PlacementID
                           where s.SID == sid
                           && p.StartDate.Value.Year == year
                           select new
                           {
-                              sp.SPID,
+                              sp.PID,
                               sp.Preference,
                               sp.Status,
                               p.PlacementID,
@@ -148,27 +157,27 @@ namespace spsServerAPI.Controllers
         }
 
         //get: GetStudentPlacementByStudentIDandYear
-        [ResponseType(typeof(List<StudentPlacement>))]
+        [ResponseType(typeof(List<StudentPreference>))]
         [Route("GetStudentPlacementByStudentIDandYear/SID/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/Year/{year:int}")]
 
         public dynamic GetStudentPlacementByStudentIDandYear(string id, int year)
         {
-            var studentPlacements = db.StudentPlacements
-                                        .Include("Placement")
-                                        .Include("Student")
-                                        .OrderBy(sp => sp.SPID)
+            var studentPlacements = db.StudentPreferences
+                                        .Include(p => p.placement)
+                                        .Include(s => s.student)
+                                        .OrderBy(sp => sp.PID)
                                             .Where(sp => sp.SID == id)
-                                            .Where(sp => sp.Placement.FinishDate.Value.Year == year)
+                                            .Where(sp => sp.placement.FinishDate.Value.Year == year)
                                             .Select(sp => new {
-                                                sp.SPID,
+                                                sp.PID,
                                                 sp.SID,
-                                                sp.Student.FirstName,
-                                                sp.Student.SecondName,
+                                                sp.student.FirstName,
+                                                sp.student.SecondName,
                                                 sp.Status,
                                                 sp.Preference,
-                                                sp.Placement.PlacementDescription,
-                                                sp.Placement.StartDate,
-                                                sp.Placement.FinishDate
+                                                sp.placement.PlacementDescription,
+                                                sp.placement.StartDate,
+                                                sp.placement.FinishDate
                                             });
             if (studentPlacements.Count() == 0)
             {
@@ -182,8 +191,8 @@ namespace spsServerAPI.Controllers
         [Route("GetStudentPlacementsByPlacementIdAndYear/PID/{id:int}/Year/{year:int}")]
         public dynamic GetStudentPlacementsByPlacementIdAndYear(int id, int year)
         {
-            var studentPlacements = db.StudentPlacements
-                .Where(sp => sp.PlacementID == id).Where(sp => sp.Placement.StartDate.Value.Year == year);
+            var studentPlacements = db.StudentPreferences
+                .Where(sp => sp.PID == id).Where(sp => sp.placement.StartDate.Value.Year == year);
             if (studentPlacements.Count() == 0)
             {
                 string message = "No Student Placement for PID " + id.ToString() + " and Year " + year.ToString();
@@ -198,15 +207,15 @@ namespace spsServerAPI.Controllers
         [Route("GetStudentPlacementsByPlacementId/{id:int}")]
         public dynamic GetStudentPlacementsByPlacementId(int id)
         {
-            var studentPlacementWithNames = db.StudentPlacements
+            var studentPlacementWithNames = db.StudentPreferences
                 .Join(db.Students, sp => sp.SID, s => s.SID,
                 (sp2, sps) => new { sp2, sps })
-                .Where(sp => sp.sp2.PlacementID == id)
+                .Where(sp => sp.sp2.PID == id)
                 .Select(a => new
                 {
-                    SPID = a.sp2.SPID,
+                    PID = a.sp2.PID,
                     SID = a.sp2.SID,
-                    PlacementID = a.sp2.PlacementID,
+                    PlacementID = a.sp2.PID,
                     Preference = a.sp2.Preference,
                     Status = a.sp2.Status,
                     Name = String.Concat(a.sps.FirstName, " ", a.sps.SecondName),
@@ -219,12 +228,12 @@ namespace spsServerAPI.Controllers
             return Ok(studentPlacementWithNames);
         }
         // GET: api/StudentPlacements/5
-        [ResponseType(typeof(StudentPlacement))]
+        [ResponseType(typeof(StudentPreference))]
         [Route("GetStudentPlacement/{id:int}")]
 
         public async Task<IHttpActionResult> GetStudentPlacement(int id)
         {
-            StudentPlacement studentPlacement = await db.StudentPlacements.FindAsync(id);
+            StudentPreference studentPlacement = await db.StudentPreferences.FindAsync(id);
             if (studentPlacement == null)
             {
                 return NotFound();
@@ -236,12 +245,12 @@ namespace spsServerAPI.Controllers
         
         public dynamic PostPreferenceSIDPID(string sid, int pid, int pref)
         {
-            if (db.StudentPlacements.Where(p => p.SID == sid && p.PlacementID == pid && p.Preference == pref)
+            if (db.StudentPreferences.Where(p => p.SID == sid && p.PID == pid && p.Preference == pref)
                 .Select(p => p).Count() > 0)
                 return BadRequest("Preference already exists for this student placement");
-            StudentPlacement sp = new
-                StudentPlacement { SID = sid, PlacementID = pid, Preference = pref, Status = 0 };
-            db.StudentPlacements.Add( sp);
+            StudentPreference sp = new
+                StudentPreference { SID = sid, PID = pid, Preference = pref, Status = 0, TimeStamp = DateTime.Now.Date };
+            db.StudentPreferences.Add( sp);
                 db.SaveChanges();
                 return Ok(sp);
         }
@@ -250,29 +259,29 @@ namespace spsServerAPI.Controllers
         
         public dynamic DeletePreferenceSIDPID(string sid, int pid, int pref)
         {
-            var sps = db.StudentPlacements.Where(p => p.SID == sid && p.PlacementID == pid && p.Preference == pref)
+            var sps = db.StudentPreferences.Where(p => p.SID == sid && p.PID == pid && p.Preference == pref)
                 .Select(p => p);
             if (sps.Count() == 0)
                 return NoContent("");
-            StudentPlacement toDelete = sps.First();
-            db.StudentPlacements.Remove(toDelete);
+            StudentPreference toDelete = sps.First();
+            db.StudentPreferences.Remove(toDelete);
             db.SaveChanges();
-            return Ok(toDelete.SPID.ToString() + " was deleted");
+            return Ok(toDelete.PID.ToString() + " was deleted");
         }
 
 
         // PUT: api/StudentPlacements/5
         [ResponseType(typeof(void))]
-        [Route("PutStudentPlacement/{id:int}")]
+        [Route("PutStudentPlacement/PID{Pid:int}/SID/{Sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
 
-        public async Task<IHttpActionResult> PutStudentPlacement(int id, StudentPlacement studentPlacement)
+        public async Task<IHttpActionResult> PutStudentPlacement(int Pid, string Sid,  StudentPreference studentPlacement)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != studentPlacement.SPID)
+            if (Pid != studentPlacement.PID && Sid != studentPlacement.SID)
             {
                 return BadRequest();
             }
@@ -285,7 +294,7 @@ namespace spsServerAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentPlacementExists(id))
+                if (!StudentPlacementExists(Pid,Sid))
                 {
                     return NotFound();
                 }
@@ -302,7 +311,7 @@ namespace spsServerAPI.Controllers
         [Route("AssignStudentToPlacement/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/PID/{pid:int}/Pref/{pref:int}")]
         public dynamic AssignStudentToPlacement(string sid, int pid)
         {
-            var aleardyThere = db.StudentPlacements.SingleOrDefault(sp => sp.SID == sid);
+            var aleardyThere = db.StudentPreferences.SingleOrDefault(sp => sp.SID == sid && sp.PID == pid);
             if (aleardyThere != null)
                 return Duplicate("Student is already placed");
             else
@@ -312,10 +321,10 @@ namespace spsServerAPI.Controllers
             return Ok();
         }
         // POST: api/StudentPlacements
-        [ResponseType(typeof(StudentPlacement))]
+        [ResponseType(typeof(StudentPreference))]
         [Route("PostStudentPlacement")]
 
-        public async Task<IHttpActionResult> PostStudentPlacement(StudentPlacement studentPlacement)
+        public async Task<IHttpActionResult> PostStudentPlacement(StudentPreference studentPlacement)
         {
             if (!ModelState.IsValid)
             {
@@ -323,12 +332,12 @@ namespace spsServerAPI.Controllers
             }
             
             // Check for preferences exceeded
-            var currentStudentPlacements = db.StudentPlacements.Select(sp => sp.SID == studentPlacement.SID);
+            var currentStudentPlacements = db.StudentPreferences.Select(sp => sp.SID == studentPlacement.SID);
             if (currentStudentPlacements.Count() > 2)
                 throw BadRequest("Preferences cannot be more than " + 
                                     currentStudentPlacements.Count().ToString());
 
-            db.StudentPlacements.Add(studentPlacement);
+            db.StudentPreferences.Add(studentPlacement);
 
             try
             {
@@ -336,7 +345,7 @@ namespace spsServerAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (StudentPlacementExists(studentPlacement.SPID))
+                if (StudentPlacementExists(studentPlacement.PID, studentPlacement.SID))
                 {
                     return Conflict();
                 }
@@ -350,17 +359,17 @@ namespace spsServerAPI.Controllers
         }
 
         // DELETE: api/StudentPlacements/5
-        [ResponseType(typeof(StudentPlacement))]
+        [ResponseType(typeof(StudentPreference))]
         [Route("DeleteStudentPlacement/{id:int}")]
         public async Task<IHttpActionResult> DeleteStudentPlacement(int id)
         {
-            StudentPlacement studentPlacement = await db.StudentPlacements.FindAsync(id);
+            StudentPreference studentPlacement = await db.StudentPreferences.FindAsync(id);
             if (studentPlacement == null)
             {
                 return NotFound();
             }
 
-            db.StudentPlacements.Remove(studentPlacement);
+            db.StudentPreferences.Remove(studentPlacement);
             await db.SaveChangesAsync();
 
             return Ok(studentPlacement);
@@ -375,9 +384,9 @@ namespace spsServerAPI.Controllers
             base.Dispose(disposing);
         }
 
-        private bool StudentPlacementExists(int id)
+        private bool StudentPlacementExists(int Pid, string Sid )
         {
-            return db.StudentPlacements.Count(e => e.SPID == id) > 0;
+            return db.StudentPreferences.Count(e => e.PID == Pid && e.SID == Sid) > 0;
         }
 
         /// <summary>

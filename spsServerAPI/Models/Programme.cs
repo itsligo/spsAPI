@@ -11,7 +11,7 @@ namespace spsServerAPI.Models
     {
         public Programme()
         {
-            ProgrammeStages = new HashSet<ProgrammeStage>();
+            programmeStages = new HashSet<ProgrammeStage>();
         }
 
         [Key]
@@ -20,6 +20,6 @@ namespace spsServerAPI.Models
 
         public string ProgrammeName { get; set; }
 
-        public virtual ICollection<ProgrammeStage> ProgrammeStages { get; set; }
+        public virtual ICollection<ProgrammeStage> programmeStages { get; set; }
     }
 }

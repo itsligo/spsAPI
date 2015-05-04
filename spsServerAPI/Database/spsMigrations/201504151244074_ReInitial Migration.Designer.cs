@@ -7,13 +7,13 @@ namespace spsServerAPI.Database.spsMigrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.1-30610")]
-    public sealed partial class initial : IMigrationMetadata
+    public sealed partial class ReInitialMigration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(initial));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ReInitialMigration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201501021505107_initial"; }
+            get { return "201504151244074_ReInitial Migration"; }
         }
         
         string IMigrationMetadata.Source

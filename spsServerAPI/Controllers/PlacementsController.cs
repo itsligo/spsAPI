@@ -73,7 +73,14 @@ namespace spsServerAPI.Controllers
        [Route("GetAllowablePlacementsAvailableList")]
         public dynamic GetAllowablePlacementsList()
         {
-            return db.Placements.Include("AllowablePlacements").Where(p => p.Filled == true);
+            return db.Placements.Include("AllowablePlacements").Where(p => p.AssignedStudentID == null 
+                || p.AssignedStudentID == string.Empty);
+                //.Join(db.PlacedStudents, 
+                //plc => plc.PlacementID, pstud => pstud.PID,
+                //(plc, pstud) => new { plc, pstud })
+                //    .Where(res => res.plc.ProviderID != res.pstud.PID)
+                //        .Select(res => res.plc.AllowablePlacements);
+                
         }
 
        [Route("GetPlacemenCountByProviderIDByYear/{year:int}/{providerId:int}")]
@@ -86,8 +93,13 @@ namespace spsServerAPI.Controllers
         [Route("GetAllowablePlacementsList/{placementId:int}")]
         public dynamic GetAllowablePlacementsList(int? placementId)
         {
-            return db.AllowablePlacements.Include("ProgrammeStage").Include("Programme").Where(a => a.PlacementID == placementId).Select(a =>
-                new { a.ProgrammeStage.Id, a.ProgrammeStage.Programme.ProgrammeName });
+            return db.AllowablePlacements.Include(ap =>ap.programmeStage).Where(a => a.PlacementID == placementId)
+                .Join(db.Programmes, 
+                ap => ap.programmeStage.ProgrammeCode, 
+                prg => prg.ProgrammeCode,
+                (aplc,prg) => new {aplc,prg} )
+                .Select(a =>
+                new { a.aplc.ProgrammeStageID, a.prg.ProgrammeName });
         }
 
         
@@ -187,7 +199,7 @@ namespace spsServerAPI.Controllers
         [Route("PostPlacement")]
         public IHttpActionResult PostPlacement(Placement placement)
         {
-            placement.Filled = false;
+            //placement.Filled = false;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

@@ -13,6 +13,7 @@ namespace spsServerAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [ForeignKey("placementProvider")]
         public int? ProviderID { get; set; }
 
         public string FirstName { get; set; }
@@ -24,6 +25,6 @@ namespace spsServerAPI.Models
 
         public string email { get; set; }
 
-        public virtual PlacementProvider PlacementProvider { get; set; }
+        public virtual PlacementProvider placementProvider { get; set; }
     }
 }

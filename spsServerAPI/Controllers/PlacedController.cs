@@ -23,7 +23,12 @@ namespace spsServerAPI.Controllers
         [Route("GetPlaced")]
         public dynamic GetPlaced(int year)
         {
-            return db.PlacedStudents.Where(p => p.Year == year);
+                var placedByYear = db.PlacedStudents
+                .Join(db.Placements, sps => sps.PID, plc => plc.PlacementID,
+                        (sp1, plc) => new { sp1, plc })
+                .Where(result => result.plc.StartDate.Value.Year == year);
+
+                return placedByYear;
         }
 
         [Route("GetStudentPlaced/PID/{pid:int}")]
@@ -31,10 +36,12 @@ namespace spsServerAPI.Controllers
         {
 
             var ret = (from placed in db.PlacedStudents
+                       join preference in db.StudentPreferences
+                       on placed.PID equals preference.PID
                        join p in db.Placements
-                       on placed.PID equals p.PlacementID
+                       on preference.PID equals p.PlacementID
                        join s in db.Students
-                       on placed.SID equals s.SID
+                       on preference.SID equals s.SID
                        join sprog in db.StudentProgrammeStages
                        on s.SID equals sprog.SID
                        join progStage in db.ProgrammeStages
@@ -42,7 +49,7 @@ namespace spsServerAPI.Controllers
                        where placed.PID == pid 
                        select new 
                        {
-                       SID = placed.SID,
+                       SID = preference.SID,
                        Name = String.Concat(new string[] {s.FirstName," ",s.SecondName}),
                        Pref = 0,
                        Prog = String.Concat(new string[] { progStage.ProgrammeCode, " Stage ", progStage.Stage.ToString() }),
@@ -53,6 +60,34 @@ namespace spsServerAPI.Controllers
             return ret;
         }
 
+        // PUT: api/Tutors/5
+        [ResponseType(typeof(void))]
+        [Route("AssignTutorToPlacement/TID/{TutorID:int}/PID/{PlacementID:int}")]
+        [HttpPut]
+        public async Task<IHttpActionResult> AssignTutorToPlacement(int TID, int PID)
+        {
+
+            // May need to do calculation of assignments based on hours being allocated
+            Placed p = await db.PlacedStudents.FindAsync(PID);
+            Tutor t = await db.Tutors.FindAsync(TID);
+            if (p == null)
+                return NotFound();
+            if (t == null)
+                return NotFound();
+            //p.TutorID = TID;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(HttpStatusCode.BadRequest);
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
 
         [HttpPost]
         [Route("PostPlaced/PID/{pid:int}/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
@@ -61,7 +96,12 @@ namespace spsServerAPI.Controllers
             // This will need to be done using constraints;
             var placement = db.Placements.Find(pid);
             var student = db.Students.Find(sid);
-            var exists = db.PlacedStudents.Where(p => p.SID == sid);
+            var exists = db.PlacedStudents
+                .Join(db.StudentPreferences, plc => plc.PID, pref => pref.PID,
+                        (sp1, pref) => new { sp1, pref })
+                .Where(x => x.pref.SID == sid);
+            
+            //var exists = db.PlacedStudents.Where(p => p.SID == sid);
 
             if(student == null)
                 return BadRequest("Student ID " + sid + " does not exist to be placed");
@@ -69,10 +109,20 @@ namespace spsServerAPI.Controllers
                 return BadRequest("Placement ID" + pid.ToString() + " does not exist ");
             if (exists.Count() > 0)
                 return BadRequest("Student ID" + sid.ToString() + " already placed ");
+            // Join placement and preferences to get the start date year for placed
+            var prefjoin = db.StudentPreferences.Join(db.Placements,
+                                    pref => pref.PID, plc => plc.PlacementID,
+                                    (spref, place) =>
+                                            new
+                                            {
+                                                spref.PID,
+                                                spref.SID,
+                                            });
+            var preference = prefjoin.Select(p => new { p.PID, p.SID }).First();
 
-            Placed placed = new Placed { PID = pid, SID = sid };
+            Placed placed = new Placed { PID = preference.PID, SID = preference.SID  };
             db.PlacedStudents.Add(placed);
-            placement.Filled = true;
+            //placement.Filled = true;
 
             try
             {
@@ -94,29 +144,60 @@ namespace spsServerAPI.Controllers
 
         }
 
-        
         [ResponseType(typeof(Placed))]
         [HttpDelete]
-        [Route("DeletePlaced/PID/{pid:int}")]
-        public async Task<IHttpActionResult> DeletePlaced(int pid)
+        [Route("DeletePlacedbyPID/pid/{pid:int}")]
+        public async Task<IHttpActionResult> DeletePlacedbyPID(int pid)
         {
-            Placed placed = db.PlacedStudents
-                .SingleOrDefault(e => e.PID == pid );
-            if (placed == null)
+            Placed PlacedStudent = (Placed)(from placedStudent in db.PlacedStudents
+                                                     join studentPreference in db.StudentPreferences
+                                                     on placedStudent.PID equals studentPreference.PID
+                                                     join placement in db.Placements
+                                                     on studentPreference.PID equals placement.PlacementID
+                                                     where placement.PlacementID == pid
+                                                     select placedStudent).FirstOrDefault();
+            if (PlacedStudent == null)
             {
                 return BadRequest("No Record to delete for " + pid.ToString());
             }
-             //this is probably redundant now but for cosistancy
 
-            Placement placement = db.Placements
-                .SingleOrDefault(e => e.PlacementID == pid );
-            
-            if(placement == null)
+            //int placedId = PlacedStudent.PID;
+            //Placement studentPlacement = (Placement)(from placedStudent in db.PlacedStudents
+            //                                         join studentPreference in db.StudentPreferences
+            //                                         on placedStudent.PID equals studentPreference.PID
+            //                                         join placement in db.Placements
+            //                                         on studentPreference.PID equals placement.PlacementID
+            //                                         where placedStudent.PID == placedId
+            //                                         select placement);
+
+            //studentPlacement.Filled = false;
+            db.PlacedStudents.Remove(PlacedStudent);
+
+            return Ok(PlacedStudent);
+        }
+
+
+
+        [ResponseType(typeof(Placed))]
+        [HttpDelete]
+        [Route("DeletePlaced/id/{id:int}")]
+        public async Task<IHttpActionResult> DeletePlaced(int id)
+        {
+            Placed placed = db.PlacedStudents
+                .SingleOrDefault(e => e.PID == id );
+            if (placed == null)
             {
-                return NotFound();
+                return BadRequest("No Record to delete for " + id.ToString());
             }
-            placement.Filled = false;
 
+            //Placement studentPlacement = (Placement)(from placedStudent in db.PlacedStudents
+            //                 join studentPreference in db.StudentPreferences
+            //                 on placedStudent.PID equals studentPreference.PID
+            //                 join placement in db.Placements
+            //                 on studentPreference.PID equals placement.PlacementID
+            //                 where placedStudent.PID == id
+            //                 select placement);
+            ////studentPlacement.Filled = false;
             db.PlacedStudents.Remove(placed);
             await db.SaveChangesAsync();
 

@@ -33,9 +33,9 @@ namespace spsServerAPI.Controllers
         public dynamic GetStudentAssignedToPlacement(int? pid, int? status)
         {
             var result = (from s in db.Students
-                          join p in db.StudentPlacements
+                          join p in db.StudentPreferences
                           on s.SID equals p.SID
-                          where p.PlacementID == pid && p.Status == status
+                          where p.PID == pid && p.Status == status
                           select new
                           {
                               s.SID,
@@ -209,7 +209,7 @@ namespace spsServerAPI.Controllers
             var StudentsforYear = (from s in db.Students
                                    join sps in db.StudentProgrammeStages
                                    on s.SID equals sps.SID
-                                   join sp in db.StudentPlacements
+                                   join sp in db.StudentPreferences
                                    on sps.SID equals sp.SID
                             where sps.Year == year
                             select new
@@ -246,8 +246,8 @@ namespace spsServerAPI.Controllers
         public dynamic GetStudentPlacementsInYear(string sid, int year)
         {
             return (from p in db.Placements
-                    join sp in db.StudentPlacements
-                    on p.PlacementID equals sp.PlacementID
+                    join sp in db.StudentPreferences
+                    on p.PlacementID equals sp.PID
                     join ss in db.StudentProgrammeStages
                     on sp.SID equals ss.SID
                     join s in db.Students
@@ -266,7 +266,7 @@ namespace spsServerAPI.Controllers
 
 
         // PUT: api/Students/5
-        [ResponseType(typeof(void))]
+        
         [Route("PutStudent/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
         public async Task<IHttpActionResult> PutStudent(string id, Student student)
         {
@@ -300,6 +300,52 @@ namespace spsServerAPI.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
+
+        // PUT: api/Students/5
+        [HttpPut]
+        [Route("Approve/{id:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}")]
+        public async Task<IHttpActionResult> Approve(string id)
+        {
+            Student student = await db.Students.FindAsync(id);
+            if (student == null)
+                return NotFound();
+            
+            using (ApplicationDbContext autDb = new ApplicationDbContext())
+            {
+
+                var exists = await autDb.Users.SingleOrDefaultAsync(
+                        s => s.UserName == id);
+                if (exists != null)
+                {
+                    ApplicationRole role = await autDb.Roles.FirstOrDefaultAsync(
+                        r => r.Name == "student");
+                    exists.Approved = true;
+                    exists.Roles.Clear(); // clear the previous unapproved role
+                                            // and add the new student role
+                    exists.Roles.Add(new ApplicationUserRole() { RoleId = role.Id, UserId = exists.Id });
+                }
+                try
+                {
+                    await autDb.SaveChangesAsync();
+
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+
+            }
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
 
         // POST: api/Students
         [ResponseType(typeof(Student))]

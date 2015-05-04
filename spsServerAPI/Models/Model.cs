@@ -20,11 +20,11 @@ namespace spsServerAPI.Models
         public virtual DbSet<Programme> Programmes { get; set; }
         public virtual DbSet<ProgrammeStage> ProgrammeStages { get; set; }
         public virtual DbSet<Student> Students { get; set; }
-        public virtual DbSet<StudentPlacement> StudentPlacements { get; set; }
+        public virtual DbSet<StudentPreference> StudentPreferences { get; set; }
         public virtual DbSet<StudentProgrammeStage> StudentProgrammeStages { get; set; }
         public virtual DbSet<Tutor> Tutors { get; set; }
         public virtual DbSet<TutorVisit> TutorVisits { get; set; }
-        public virtual DbSet<Placed> PlacedStudents { get; set; }
+        //public virtual DbSet<Placed> PlacedStudents { get; set; }
         //// The following are to be dropped from the Database model
         //public virtual DbSet<AvailablePlacementsView> AvailablePlacementsViews { get; set; }
         //public virtual DbSet<PlacementProviderView> PlacementProviderViews { get; set; }
@@ -37,50 +37,50 @@ namespace spsServerAPI.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Placement>()
-                .HasMany(e => e.StudentPlacements)
-                .WithOptional(e => e.Placement)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<Placement>()
+            //    .HasMany(e => e.StudentPlacements)
+            //    .WithRequired(e => e.Placement)
+            //    .WillCascadeOnDelete();
 
-            modelBuilder.Entity<PlacementProvider>()
-                .HasMany(e => e.Placements)
-                .WithOptional(e => e.PlacementProvider)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<PlacementProvider>()
+            //    .HasMany(e => e.Placements)
+            //    .WithOptional(e => e.PlacementProvider)
+            //    .WillCascadeOnDelete();
 
-            modelBuilder.Entity<PlacementType>()
-                .HasMany(e => e.Placements)
-                .WithOptional(e => e.PlacementTypeRef)
-                .HasForeignKey(e => e.PlacementType);
+            //modelBuilder.Entity<PlacementType>()
+            //    .HasMany(e => e.Placements)
+            //    .WithOptional(e => e.PlacementTypeRef)
+            //    .HasForeignKey(e => e.PlacementType);
 
-            modelBuilder.Entity<Programme>()
-                .HasMany(e => e.ProgrammeStages)
-                .WithOptional(e => e.Programme)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<Programme>()
+            //    .HasMany(e => e.ProgrammeStages)
+            //    .WithOptional(e => e.Programme)
+            //    .WillCascadeOnDelete();
 
-            modelBuilder.Entity<ProgrammeStage>()
-                .HasMany(e => e.StudentProgrammeStages)
-                .WithOptional(e => e.ProgrammeStage)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<ProgrammeStage>()
+            //    .HasMany(e => e.StudentProgrammeStages)
+            //    .WithOptional(e => e.ProgrammeStage)
+            //    .WillCascadeOnDelete();
 
-            modelBuilder.Entity<Student>()
-                .HasMany(e => e.StudentProgrammeStages)
-                .WithOptional(e => e.Student)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<Student>()
+            //    .HasMany(e => e.StudentProgrammeStages)
+            //    .WithOptional(e => e.Student)
+            //    .WillCascadeOnDelete();
 
-            modelBuilder.Entity<Student>()
-                .HasMany(e => e.StudentPlacements)
-                .WithOptional(e => e.Student)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<Student>()
+            //    .HasMany(e => e.StudentPlacements)
+            //    .WithOptional(e => e.Student)
+            //    .WillCascadeOnDelete();
 
-            modelBuilder.Entity<Tutor>()
-                .HasMany(e => e.StudentPlacements)
-                .WithOptional(e => e.Tutor)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<Tutor>()
+            //    .HasMany(e => e.StudentPlacements)
+            //    .WithOptional(e => e.assignedTutor)
+            //    .WillCascadeOnDelete();
 
-            modelBuilder.Entity<Tutor>()
-                .HasMany(e => e.TutorVisits)
-                .WithOptional(e => e.Tutor)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<Tutor>()
+            //    .HasMany(e => e.TutorVisits)
+            //    .WithOptional(e => e.tutor)
+            //    .WillCascadeOnDelete();
 
 
         }

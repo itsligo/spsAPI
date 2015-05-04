@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Claims;
@@ -446,6 +447,70 @@ namespace spsServerAPI.Controllers
                         new forApproval { SID = user.UserName, Approved = user.Approved });
                         
             return retList;
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "admin")]
+        [AllowAnonymous]
+        [Route("SetupTestStudentAccounts")]
+        public async Task<dynamic> SetupTestStudentAccounts()
+        {
+            var users = autDb.Users;
+
+            List<Student> studentsNotEntered = new List<Student>();
+
+            using(Model model = new Model())
+            {
+                studentsNotEntered = model.Students.Include(s => s.StudentProgrammeStages).ToList<Student>();
+            }
+
+                foreach(Student s in studentsNotEntered)
+                {
+                    if(users.FirstOrDefault(u => u.UserName == s.SID) == null)
+                            {
+                                ApplicationRole role = await autDb.Roles.FirstOrDefaultAsync(
+                                    r => r.Name == "student");
+                                PasswordHasher p = new PasswordHasher();
+                                //var ps = model.StudentProgrammeStages.SingleOrDefault(sps => sps.SID == s.SID);
+                                        
+                                if(s.StudentProgrammeStages.Count > 0)
+                                    {
+                                    
+                                    var user = new ApplicationUser()
+                                        {
+
+                                            FirstName = s.FirstName,
+                                            SecondName = s.SecondName,
+                                            UserName = s.SID,
+                                            Email = s.SID,
+                                            Approved = true,
+                                            PasswordHash = p.HashPassword(s.SID),
+                                            // Should only beone
+                                            ProgrammeStageID = s.StudentProgrammeStages.Select( sps => sps.ProgrammeStageID).First()
+                                            //SecurityStamp = new Guid(model.Email).ToString() 
+                                            // now done in Application user constructor
+
+                                        };
+                                        autDb.Users.Add(user);
+                                        user.Roles.Add(new ApplicationUserRole { RoleId = role.Id });
+                                
+                                    }
+
+                            }
+                }
+
+            try
+            {
+                await autDb.SaveChangesAsync();
+
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException err)
+            {
+                return BadRequest("Error Adding User login while adding student " + err.Message);
+            }
+
+
+            return null;
         }
 
         [HttpPut]

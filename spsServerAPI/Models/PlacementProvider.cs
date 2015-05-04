@@ -11,8 +11,8 @@ namespace spsServerAPI.Models
     {
         public PlacementProvider()
         {
-            Placements = new HashSet<Placement>();
-            PlacementSupervisors = new HashSet<PlacementSupervisor>();
+            placements = new HashSet<Placement>();
+            //PlacementSupervisors = new HashSet<PlacementSupervisor>();
         }
 
         [Key]
@@ -36,6 +36,8 @@ namespace spsServerAPI.Models
         public string County { get; set; }
 
         public string Country { get; set; }
+        
+        public string WebLink { get; set; }
 
         // Supervisor Details
 
@@ -49,8 +51,8 @@ namespace spsServerAPI.Models
         //[EmailAddress]
         //public string SupervisorEmail { get; set; }
 
-        public virtual ICollection<Placement> Placements { get; set; }
+        public virtual ICollection<Placement> placements { get; set; }
 
-        public virtual ICollection<PlacementSupervisor> PlacementSupervisors { get; set; }
+        //public virtual ICollection<PlacementSupervisor> PlacementSupervisors { get; set; }
     }
 }

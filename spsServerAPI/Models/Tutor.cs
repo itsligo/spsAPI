@@ -11,8 +11,8 @@ namespace spsServerAPI.Models
     {
         public Tutor()
         {
-            StudentPlacements = new HashSet<StudentPlacement>();
-            TutorVisits = new HashSet<TutorVisit>();
+            //StudentPlacements = new HashSet<Placed>();
+            tutorVisits = new HashSet<TutorVisit>();
         }
         
         [Key]
@@ -27,13 +27,15 @@ namespace spsServerAPI.Models
         public string SecondName { get; set; }
 
         [StringLength(50)]
+        [Phone]
         public string ContactNumber1 { get; set; }
 
         [StringLength(50)]
+        [Phone]
         public string ContactNumber2 { get; set; }
 
-        public virtual ICollection<StudentPlacement> StudentPlacements { get; set; }
+        //public virtual ICollection<Placement> studentPlacements { get; set; }
 
-        public virtual ICollection<TutorVisit> TutorVisits { get; set; }
+        public virtual ICollection<TutorVisit> tutorVisits { get; set; }
     }
 }

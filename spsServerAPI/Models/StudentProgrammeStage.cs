@@ -13,15 +13,16 @@ namespace spsServerAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MemberID { get; set; }
 
-        [StringLength(50)]
+
+        [ForeignKey("student")]
         public string SID { get; set; }
+        [ForeignKey("programmeStage")]
+        public int ProgrammeStageID { get; set; }
 
-        public int? ProgrammeStageID { get; set; }
+        public int Year { get; set; }
 
-        public int? Year { get; set; }
+        public virtual ProgrammeStage programmeStage { get; set; }
 
-        public virtual ProgrammeStage ProgrammeStage { get; set; }
-
-        public virtual Student Student { get; set; }
+        public virtual Student student { get; set; }
     }
 }
