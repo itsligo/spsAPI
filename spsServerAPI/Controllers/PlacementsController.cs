@@ -157,6 +157,30 @@ namespace spsServerAPI.Controllers
             return Ok(returnPlacement);
         }
 
+        [HttpPut]
+        [Route("PlaceStudent/PID/{id:int}/SID/{studentID}")]
+        public IHttpActionResult PutPlacement(int id, string studentID)
+        {
+            Placement p = db.Placements.Find(id);
+
+                if (p == null)
+                {
+                    return NotFound();
+                }
+            p.AssignedStudentID = studentID;
+            //db.Entry(p).State = EntityState.Modified;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Could not assign student to placement " + ex.Message);
+            }
+
+            return Ok(p);
+        }
+
         // PUT: api/Placements/5
         [ResponseType(typeof(void))]
         [Route("PutPlacement/{id:int}")]
