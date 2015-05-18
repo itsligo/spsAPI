@@ -159,7 +159,7 @@ namespace spsServerAPI.Controllers
 
         [HttpPut]
         [Route("PlaceStudent/PID/{id:int}/SID/{studentID}")]
-        public IHttpActionResult PutPlacement(int id, string studentID)
+        public IHttpActionResult PlaceStudent(int id, string studentID)
         {
             Placement p = db.Placements.Find(id);
 
@@ -176,6 +176,33 @@ namespace spsServerAPI.Controllers
             catch(Exception ex)
             {
                 return BadRequest("Could not assign student to placement " + ex.Message);
+            }
+
+            return Ok(p);
+        }
+
+
+        [HttpPut]
+        [Route("UnPlaceStudent/PID/{id:int}/SID/{studentID}")]
+        public IHttpActionResult UnPlaceStudent(int id, string studentID)
+        {
+            Placement p = db.Placements
+                .Where(plc => plc.PlacementID == id 
+                    && plc.AssignedStudentID == studentID)
+                    .FirstOrDefault();
+            if (p == null)
+            {
+                return NotFound();
+            }
+            p.AssignedStudentID = null;
+            //db.Entry(p).State = EntityState.Modified;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Could unassign student from placement " + ex.Message);
             }
 
             return Ok(p);
