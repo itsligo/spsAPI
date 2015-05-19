@@ -120,10 +120,10 @@ namespace spsServerAPI.Controllers
                               ps.Stage,
                               sps.Year
                           });
-            if (result.Count() == 0)
-            {
-                return BadRequest("No matching records for" + pid.ToString() + " and " + pref.ToString());
-            }
+            //if (result.Count() == 0)
+            //{
+            //    return BadRequest("No matching records for" + pid.ToString() + " and " + pref.ToString());
+            //}
 
             return Ok(result);
 
@@ -147,10 +147,10 @@ namespace spsServerAPI.Controllers
                               p.PlacementID,
                               p.PlacementDescription
                           });
-            if (result.Count() == 0)
-            {
-                return BadRequest("No matching records for" + sid.ToString() + " and " + year.ToString());
-            }
+            //if (result.Count() == 0)
+            //{
+            //    return BadRequest("No matching records for" + sid.ToString() + " and " + year.ToString());
+            //}
 
             return Ok(result);
 

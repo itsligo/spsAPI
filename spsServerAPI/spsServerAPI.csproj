@@ -243,6 +243,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\importController.cs" />
+    <Compile Include="Controllers\PlacedController.cs" />
     <Compile Include="Controllers\PlacementProvidersController.cs" />
     <Compile Include="Controllers\PlacementsController.cs" />
     <Compile Include="Controllers\PlacementTypesController.cs" />
