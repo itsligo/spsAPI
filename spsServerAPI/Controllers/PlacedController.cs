@@ -162,7 +162,7 @@ namespace spsServerAPI.Controllers
 
         [ResponseType(typeof(Placement))]
         [HttpDelete]
-        [Route("DeletePlaced/id/{id:int}")]
+        [Route("DeletePlaced/PID/{id:int}")]
         public async Task<IHttpActionResult> DeletePlaced(int id)
         {
             Placement placed = db.Placements
