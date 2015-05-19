@@ -220,11 +220,11 @@ namespace spsServerAPI.Controllers
                     Status = a.sp2.Status,
                     Name = String.Concat(a.sps.FirstName, " ", a.sps.SecondName),
                 });
-            if (studentPlacementWithNames.Count() == 0)
-            {
-                string message = "No Student Placements for PID " + id.ToString();
-                return NotFound(message);
-            }
+            //if (studentPlacementWithNames.Count() == 0)
+            //{
+            //    string message = "No Student Placements for PID " + id.ToString();
+            //    return NotFound(message);
+            //}
             return Ok(studentPlacementWithNames);
         }
         // GET: api/StudentPlacements/5
