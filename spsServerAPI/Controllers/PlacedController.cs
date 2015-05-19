@@ -147,55 +147,45 @@ namespace spsServerAPI.Controllers
             Placement PlacedStudent = (Placement)(from placedStudent in db.Placements
                                             where placedStudent.PlacementID == pid
                                             select placedStudent).FirstOrDefault();
-            if (PlacedStudent == null)
-            {
-                return BadRequest("No Record to delete for " + pid.ToString());
-            }
+            //if (PlacedStudent == null)
+            //{
+            //    return BadRequest("No Record to delete for " + pid.ToString());
+            //}
 
             PlacedStudent.AssignedStudentID = null;
             db.SaveChanges();
-            //int placedId = PlacedStudent.PID;
-            //Placement studentPlacement = (Placement)(from placedStudent in db.PlacedStudents
-            //                                         join studentPreference in db.StudentPreferences
-            //                                         on placedStudent.PID equals studentPreference.PID
-            //                                         join placement in db.Placements
-            //                                         on studentPreference.PID equals placement.PlacementID
-            //                                         where placedStudent.PID == placedId
-            //                                         select placement);
-
-            //studentPlacement.Filled = false;
-            //db.PlacedStudents.Remove(PlacedStudent);
 
             return Ok(PlacedStudent);
         }
 
 
 
-        //[ResponseType(typeof(Placed))]
-        //[HttpDelete]
-        //[Route("DeletePlaced/id/{id:int}")]
-        //public async Task<IHttpActionResult> DeletePlaced(int id)
-        //{
-        //    Placed placed = db.PlacedStudents
-        //        .SingleOrDefault(e => e.PID == id );
-        //    if (placed == null)
-        //    {
-        //        return BadRequest("No Record to delete for " + id.ToString());
-        //    }
+        [ResponseType(typeof(Placement))]
+        [HttpDelete]
+        [Route("DeletePlaced/id/{id:int}")]
+        public async Task<IHttpActionResult> DeletePlaced(int id)
+        {
+            Placement placed = db.Placements
+                .SingleOrDefault(e => e.PlacementID == id);
+            if (placed == null)
+            {
+                return BadRequest("No Record to delete for " + id.ToString());
+            }
 
-        //    //Placement studentPlacement = (Placement)(from placedStudent in db.PlacedStudents
-        //    //                 join studentPreference in db.StudentPreferences
-        //    //                 on placedStudent.PID equals studentPreference.PID
-        //    //                 join placement in db.Placements
-        //    //                 on studentPreference.PID equals placement.PlacementID
-        //    //                 where placedStudent.PID == id
-        //    //                 select placement);
-        //    ////studentPlacement.Filled = false;
-        //    db.PlacedStudents.Remove(placed);
-        //    await db.SaveChangesAsync();
+            //Placement studentPlacement = (Placement)(from placedStudent in db.PlacedStudents
+            //                 join studentPreference in db.StudentPreferences
+            //                 on placedStudent.PID equals studentPreference.PID
+            //                 join placement in db.Placements
+            //                 on studentPreference.PID equals placement.PlacementID
+            //                 where placedStudent.PID == id
+            //                 select placement);
+            ////studentPlacement.Filled = false;
+            //db.PlacedStudents.Remove(placed);
+            placed.AssignedStudentID = null;
+            await db.SaveChangesAsync();
 
-        //    return Ok(placed);
-        //}
+            return Ok(placed);
+        }
 
         private bool PlacedExists(Placement p)
         {
