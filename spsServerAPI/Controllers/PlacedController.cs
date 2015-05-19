@@ -131,24 +131,9 @@ namespace spsServerAPI.Controllers
 
             //Placed placed = new Placed { PID = preference.PID, SID = preference.SID  };
             placement.AssignedStudentID = sid;
-            db.Placements.Add(placement);
+            //db.Placements.Add(placement);
             //placement.Filled = true;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateException)
-            {
-                if (PlacedExists(placement))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            db.SaveChanges();
 
             return Ok(placement);
 
