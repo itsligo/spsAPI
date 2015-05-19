@@ -241,6 +241,8 @@ namespace spsServerAPI.Controllers
 
             return Ok(studentPlacement);
         }
+
+        [HttpPost]
         [Route("PostPreferenceSIDPID/SID/{sid:regex(^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$)}/PID/{pid:int}/Pref/{pref:int}")]
         
         public dynamic PostPreferenceSIDPID(string sid, int pid, int pref)
@@ -251,7 +253,7 @@ namespace spsServerAPI.Controllers
             StudentPreference sp = new
                 StudentPreference { SID = sid, PID = pid, Preference = pref, Status = 0, TimeStamp = DateTime.Now.Date };
             db.StudentPreferences.Add( sp);
-                db.SaveChanges();
+            db.SaveChanges();
                 return Ok(sp);
         }
 
